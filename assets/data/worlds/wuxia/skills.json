@@ -1,0 +1,52 @@
+{
+  "skills": [
+    {
+      "id": "punch",
+      "name": "直拳",
+      "type": "attack",
+      "mpCost": 0,
+      "power": 1.0,
+      "desc": "最基础的搏斗招式。"
+    },
+    {
+      "id": "swift_slash",
+      "name": "疾风斩",
+      "type": "attack",
+      "mpCost": 6,
+      "power": 1.55,
+      "desc": "借势突进，一击而过。"
+    },
+    {
+      "id": "inner_breath",
+      "name": "吐纳术",
+      "type": "support",
+      "mpCost": 4,
+      "power": 1.2,
+      "desc": "调整内息，使招式更加稳固。"
+    },
+    {
+      "id": "tianyue_sword",
+      "name": "天岳十三剑·起手",
+      "type": "attack",
+      "mpCost": 8,
+      "power": 1.8,
+      "desc": "天岳入门剑式，讲究起手先机。"
+    },
+    {
+      "id": "shadow_step",
+      "name": "影步",
+      "type": "attack",
+      "mpCost": 7,
+      "power": 1.72,
+      "desc": "以步法乱敌视线，再借隙出手。"
+    },
+    {
+      "id": "meridian_needle",
+      "name": "行脉针诀",
+      "type": "attack",
+      "mpCost": 9,
+      "power": 1.76,
+      "desc": "以内劲催针，专攻敌人经脉虚处。"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "projectName": "一念穿越：江湖初卷",
+  "repositoryName": "transmigrator-wuxia",
+  "version": "1.2.0",
+  "releaseChannel": "public",
+  "world": "wuxia",
+  "storageKey": "transmigrator_wuxia_save_v120",
+  "releaseDate": "2026-03-30",
+  "notes": [
+    "Main hub redesigned into a playable page-game layout with central game area and sidebar intel.",
+    "Added unified dark-metal modal windows inspired by classic action MMO UIs.",
+    "Added hover preview/info panels for equipment in inventory, shop, and character window."
+  ]
+}

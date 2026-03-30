@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="一念穿越：江湖初卷 - 可直接推送到 GitHub 新仓库并用 GitHub Pages 发布的武侠穿越页游项目" />
+  <title>一念穿越：江湖初卷</title>
+  <meta name="theme-color" content="#07111d" />
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg" />
+  <link rel="stylesheet" href="./css/reset.css" />
+  <link rel="stylesheet" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/ui.css" />
+</head>
+<body>
+  <div id="game-shell">
+    <div id="game-header">
+      <div class="brand">
+        <h1>一念穿越：江湖初卷</h1>
+        <p>UMD 武侠穿越页游 / 主界面版 / 暗金属弹窗风格 / 仓库名建议：transmigrator-wuxia</p>
+      </div>
+      <div id="top-actions">
+        <a class="ghost-btn ghost-link" href="./version.html">版本页</a>
+        <button id="btn-export-save" class="ghost-btn">导出存档</button>
+        <button id="btn-import-save" class="ghost-btn">导入存档</button>
+        <input id="import-save-input" type="file" accept="application/json" hidden />
+      </div>
+    </div>
+
+    <div id="game-stage">
+      <div id="game-container"></div>
+      <div id="ui-root"></div>
+    </div>
+
+    <div id="toast-root"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+
+  <script src="./js/core/namespace.js" defer></script>
+  <script src="./js/core/config.js" defer></script>
+  <script src="./js/core/eventBus.js" defer></script>
+  <script src="./js/core/storage.js" defer></script>
+  <script src="./js/core/dataLoader.js" defer></script>
+  <script src="./js/core/router.js" defer></script>
+
+  <script src="./js/ui/panel.js" defer></script>
+  <script src="./js/ui/modal.js" defer></script>
+  <script src="./js/ui/choiceList.js" defer></script>
+  <script src="./js/ui/hud.js" defer></script>
+  <script src="./js/ui/gameWindows.js" defer></script>
+
+  <script src="./js/managers/playerManager.js" defer></script>
+  <script src="./js/managers/worldManager.js" defer></script>
+  <script src="./js/managers/eventManager.js" defer></script>
+  <script src="./js/managers/battleManager.js" defer></script>
+  <script src="./js/managers/saveManager.js" defer></script>
+  <script src="./js/managers/audioManager.js" defer></script>
+
+  <script src="./js/worlds/wuxia/worldRules.js" defer></script>
+  <script src="./js/worlds/wuxia/worldController.js" defer></script>
+
+  <script src="./js/scenes/BootScene.js" defer></script>
+  <script src="./js/scenes/PreloadScene.js" defer></script>
+  <script src="./js/scenes/MainMenuScene.js" defer></script>
+  <script src="./js/scenes/CreateRoleScene.js" defer></script>
+  <script src="./js/scenes/WorldMapScene.js" defer></script>
+  <script src="./js/scenes/EventScene.js" defer></script>
+  <script src="./js/scenes/BattleScene.js" defer></script>
+  <script src="./js/scenes/TownScene.js" defer></script>
+  <script src="./js/scenes/EndingScene.js" defer></script>
+
+  <script src="./js/main.js" defer></script>
+</body>
+</html>

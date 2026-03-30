@@ -1,0 +1,58 @@
+{
+  "id": "wuxia",
+  "name": "大晟江湖",
+  "intro": "现代灵魂坠入风雨江湖，于刀光剑影与时空裂缝间寻找归路。",
+  "factions": [
+    {
+      "id": "tianyue",
+      "name": "天岳剑宗",
+      "desc": "名门正派，以剑立宗，重气节与传承。",
+      "baseNodeId": "tianyue_gate",
+      "signatureSkillId": "tianyue_sword",
+      "signatureItemId": "tianyue_sword_token"
+    },
+    {
+      "id": "xuanyi",
+      "name": "玄衣楼",
+      "desc": "暗中织网，操纵消息、刺探与交易。",
+      "baseNodeId": "night_market",
+      "signatureSkillId": "shadow_step",
+      "signatureItemId": "shadow_mask"
+    },
+    {
+      "id": "yaowang",
+      "name": "药王谷",
+      "desc": "医毒并重，讲究经脉、药理与机关。",
+      "baseNodeId": "yaowang_outer",
+      "signatureSkillId": "meridian_needle",
+      "signatureItemId": "medicine_satchel"
+    }
+  ],
+  "endings": [
+    {
+      "id": "ending_return",
+      "title": "归路初现",
+      "desc": "你在追索界门的旅途中窥见了回到现代的裂隙。虽然尚未真正离开，但你已不再是任人摆布的异乡人。"
+    },
+    {
+      "id": "ending_master",
+      "title": "宗师初成",
+      "desc": "你踏遍江湖，最终凭一身武学立足于群雄之间。这个世界开始把你视作真正的武林中人。"
+    },
+    {
+      "id": "ending_truth",
+      "title": "界门真相",
+      "desc": "你触碰到了穿越背后的真正秘密：武侠世界不是终点，而是诸天裂隙中的第一道门。"
+    },
+    {
+      "id": "ending_shadow",
+      "title": "夜幕执棋",
+      "desc": "你将裂隙与江湖消息一并纳入掌中，成了夜色里最难被看透的人。"
+    },
+    {
+      "id": "ending_defeat",
+      "title": "魂断异乡",
+      "desc": "你在这片陌生江湖中倒下。也许下一次，你会更快看懂人心、刀光与命数。"
+    }
+  ]
+}

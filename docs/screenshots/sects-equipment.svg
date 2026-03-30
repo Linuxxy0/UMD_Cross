@@ -1,0 +1,30 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#08101C"/>
+  <rect x="52" y="48" width="1496" height="804" rx="30" fill="#0D1726" stroke="#F5D17E" stroke-opacity="0.12"/>
+  <text x="92" y="118" fill="#F5D17E" font-size="22" font-family="Microsoft YaHei, sans-serif">SECTS / EQUIPMENT SYSTEM</text>
+  <text x="92" y="182" fill="#F7EFD9" font-size="56" font-weight="700" font-family="Microsoft YaHei, sans-serif">门派与装备系统</text>
+  <rect x="92" y="236" width="450" height="530" rx="26" fill="#121F31" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="124" y="294" fill="#F7EFD9" font-size="30" font-family="Microsoft YaHei, sans-serif">三大门派</text>
+  <rect x="124" y="332" width="386" height="106" rx="18" fill="#0F1A28" stroke="#F5D17E" stroke-opacity="0.18"/>
+  <text x="150" y="374" fill="#F5D17E" font-size="24" font-family="Microsoft YaHei, sans-serif">天岳剑宗</text>
+  <text x="150" y="408" fill="#B5C1AF" font-size="19" font-family="Microsoft YaHei, sans-serif">正统剑路，成长稳定，适合新局推进</text>
+  <rect x="124" y="458" width="386" height="106" rx="18" fill="#0F1A28" stroke="#6AD2FF" stroke-opacity="0.22"/>
+  <text x="150" y="500" fill="#8EDFFF" font-size="24" font-family="Microsoft YaHei, sans-serif">玄衣楼</text>
+  <text x="150" y="534" fill="#B5C1AF" font-size="19" font-family="Microsoft YaHei, sans-serif">暗线推进，偏潜行、交易与消息操盘</text>
+  <rect x="124" y="584" width="386" height="106" rx="18" fill="#0F1A28" stroke="#9FDCA7" stroke-opacity="0.26"/>
+  <text x="150" y="626" fill="#9FDCA7" font-size="24" font-family="Microsoft YaHei, sans-serif">药王谷</text>
+  <text x="150" y="660" fill="#B5C1AF" font-size="19" font-family="Microsoft YaHei, sans-serif">医毒并重，恢复、经脉与机关路线</text>
+  <rect x="592" y="236" width="856" height="530" rx="26" fill="#121F31" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="628" y="294" fill="#F7EFD9" font-size="30" font-family="Microsoft YaHei, sans-serif">装备槽位与商店闭环</text>
+  <rect x="632" y="348" width="224" height="150" rx="20" fill="#0F1A28" stroke="#F5D17E" stroke-opacity="0.18"/>
+  <text x="704" y="404" fill="#F5D17E" font-size="28" font-family="Microsoft YaHei, sans-serif">武器</text>
+  <text x="684" y="446" fill="#B5C1AF" font-size="18" font-family="Microsoft YaHei, sans-serif">剑 / 刀 / 暗器</text>
+  <rect x="908" y="348" width="224" height="150" rx="20" fill="#0F1A28" stroke="#FFFFFF" stroke-opacity="0.10"/>
+  <text x="980" y="404" fill="#F7EFD9" font-size="28" font-family="Microsoft YaHei, sans-serif">护甲</text>
+  <text x="956" y="446" fill="#B5C1AF" font-size="18" font-family="Microsoft YaHei, sans-serif">布衣 / 轻甲</text>
+  <rect x="1184" y="348" width="224" height="150" rx="20" fill="#0F1A28" stroke="#6AD2FF" stroke-opacity="0.22"/>
+  <text x="1256" y="404" fill="#8EDFFF" font-size="28" font-family="Microsoft YaHei, sans-serif">饰品</text>
+  <text x="1232" y="446" fill="#B5C1AF" font-size="18" font-family="Microsoft YaHei, sans-serif">令牌 / 药囊</text>
+  <text x="632" y="572" fill="#B5C1AF" font-size="22" font-family="Microsoft YaHei, sans-serif">城镇购买 → 背包装备 → 属性加成 → 事件与战斗收益</text>
+  <text x="632" y="616" fill="#F5D17E" font-size="22" font-family="Microsoft YaHei, sans-serif">首发目标不是炫技，而是形成可维护、可扩展的完整成长闭环。</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#09111D"/>
+  <rect x="48" y="44" width="1504" height="812" rx="32" fill="#0D1725" stroke="#F5D17E" stroke-opacity="0.12"/>
+  <text x="96" y="122" fill="#F5D17E" font-size="22" font-family="Microsoft YaHei, sans-serif">WORLD MAP / NODE EXPLORATION</text>
+  <text x="96" y="188" fill="#F7EFD9" font-size="58" font-weight="700" font-family="Microsoft YaHei, sans-serif">大晟江湖探索图</text>
+  <rect x="96" y="244" width="530" height="560" rx="28" fill="#101C2C" stroke="#FFFFFF" stroke-opacity="0.07"/>
+  <circle cx="255" cy="352" r="18" fill="#F5D17E"/>
+  <circle cx="400" cy="470" r="18" fill="#6AD2FF"/>
+  <circle cx="548" cy="364" r="18" fill="#6AD2FF"/>
+  <circle cx="288" cy="620" r="18" fill="#6AD2FF"/>
+  <circle cx="490" cy="634" r="18" fill="#F5D17E"/>
+  <path d="M255 352L400 470L548 364" stroke="#8AB6D7" stroke-width="4" stroke-linecap="round"/>
+  <path d="M400 470L288 620L490 634" stroke="#8AB6D7" stroke-width="4" stroke-linecap="round"/>
+  <path d="M400 470L490 634" stroke="#F5D17E" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 10"/>
+  <text x="208" y="316" fill="#F7EFD9" font-size="22" font-family="Microsoft YaHei, sans-serif">断瓦破庙</text>
+  <text x="350" y="438" fill="#F7EFD9" font-size="22" font-family="Microsoft YaHei, sans-serif">青石镇</text>
+  <text x="500" y="332" fill="#F7EFD9" font-size="22" font-family="Microsoft YaHei, sans-serif">夜市渡口</text>
+  <text x="232" y="674" fill="#F7EFD9" font-size="22" font-family="Microsoft YaHei, sans-serif">黑风山</text>
+  <text x="442" y="688" fill="#F7EFD9" font-size="22" font-family="Microsoft YaHei, sans-serif">天岳山门</text>
+  <rect x="680" y="244" width="760" height="260" rx="28" fill="#101C2C" stroke="#FFFFFF" stroke-opacity="0.07"/>
+  <text x="724" y="304" fill="#F7EFD9" font-size="34" font-family="Microsoft YaHei, sans-serif">节点地图设计要点</text>
+  <text x="724" y="362" fill="#B5C1AF" font-size="22" font-family="Microsoft YaHei, sans-serif">• 首发以节点推进替代开放世界，降低资源与导航成本</text>
+  <text x="724" y="404" fill="#B5C1AF" font-size="22" font-family="Microsoft YaHei, sans-serif">• 节点可挂载战斗、事件、门派、商店与终局入口</text>
+  <text x="724" y="446" fill="#B5C1AF" font-size="22" font-family="Microsoft YaHei, sans-serif">• 适合 GitHub Pages 纯前端配置化扩展</text>
+  <rect x="680" y="534" width="760" height="270" rx="28" fill="#101C2C" stroke="#FFFFFF" stroke-opacity="0.07"/>
+  <text x="724" y="594" fill="#F7EFD9" font-size="34" font-family="Microsoft YaHei, sans-serif">当前可扩展方向</text>
+  <text x="724" y="652" fill="#F5D17E" font-size="22" font-family="Microsoft YaHei, sans-serif">门派任务链 / 隐藏结局 / 第二世界入口 / NPC 好感</text>
+  <text x="724" y="696" fill="#B5C1AF" font-size="22" font-family="Microsoft YaHei, sans-serif">仓库结构已支持世界配置追加，无需推倒重做。</text>
+</svg>

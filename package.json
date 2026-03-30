@@ -1,0 +1,25 @@
+{
+  "name": "transmigrator-wuxia",
+  "version": "1.2.0",
+  "private": true,
+  "description": "可直接推送到 GitHub 新仓库并通过 GitHub Pages 发布的武侠穿越 HTML5 页游项目",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "npx serve . -l 8080",
+    "validate": "python3 scripts/validate_assets.py",
+    "release:zip": "python3 scripts/release_zip.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourname/transmigrator-wuxia.git"
+  },
+  "keywords": [
+    "game",
+    "phaser",
+    "github-pages",
+    "wuxia",
+    "transmigration",
+    "html5"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,10 @@
+{
+  "npcs": [
+    { "id": "tea_oldman", "name": "茶摊老者", "role": "说书人", "faction": "neutral" },
+    { "id": "mysterious_healer", "name": "沈素问", "role": "神秘医者", "faction": "yaowang" },
+    { "id": "young_swordsman_npc", "name": "顾长微", "role": "剑客", "faction": "tianyue" },
+    { "id": "shadow_broker", "name": "乌九", "role": "夜市掮客", "faction": "xuanyi" },
+    { "id": "tianyue_elder", "name": "岳清岚", "role": "天岳执事", "faction": "tianyue" },
+    { "id": "yaowang_apprentice", "name": "白茯", "role": "药童", "faction": "yaowang" }
+  ]
+}

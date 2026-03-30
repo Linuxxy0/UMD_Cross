@@ -1,0 +1,122 @@
+{
+  "items": [
+    {
+      "id": "bandage",
+      "name": "绷带",
+      "type": "consumable",
+      "price": 8,
+      "desc": "简易包扎物，战斗中可恢复少量气血。"
+    },
+    {
+      "id": "herbal_pill",
+      "name": "回气散",
+      "type": "consumable",
+      "price": 14,
+      "desc": "草药研磨而成，适合在休整时恢复气血与内力。"
+    },
+    {
+      "id": "smoke_pellet",
+      "name": "烟雾丸",
+      "type": "consumable",
+      "price": 18,
+      "desc": "玄衣楼常见小物，可掩护撤退。"
+    },
+    {
+      "id": "copper_token",
+      "name": "异纹铜片",
+      "type": "quest",
+      "price": 0,
+      "desc": "刻有不属于此世纹路的铜片，似乎与界门有关。"
+    },
+    {
+      "id": "steel_sword",
+      "name": "精铁长剑",
+      "type": "equipment",
+      "slot": "weapon",
+      "price": 42,
+      "stats": { "attack": 4, "agility": 1 },
+      "desc": "剑身修长，适合初入江湖者使用。"
+    },
+    {
+      "id": "bronze_dagger",
+      "name": "青铜短匕",
+      "type": "equipment",
+      "slot": "weapon",
+      "price": 36,
+      "stats": { "attack": 3, "agility": 2 },
+      "desc": "短兵贴身，出手轻快，夜行者偏爱。"
+    },
+    {
+      "id": "cloth_robe",
+      "name": "布衣短衫",
+      "type": "equipment",
+      "slot": "armor",
+      "price": 18,
+      "stats": { "defense": 2, "maxHp": 8 },
+      "desc": "最常见的行旅衣物，聊胜于无。"
+    },
+    {
+      "id": "leather_guard",
+      "name": "皮护肩",
+      "type": "equipment",
+      "slot": "armor",
+      "price": 32,
+      "stats": { "defense": 3, "maxHp": 12 },
+      "desc": "轻便耐磨，适合路途奔袭和山林遭遇战。"
+    },
+    {
+      "id": "traveler_boots",
+      "name": "行旅快靴",
+      "type": "equipment",
+      "slot": "accessory",
+      "price": 22,
+      "stats": { "agility": 2, "maxMp": 4 },
+      "desc": "鞋底轻巧，适合长途行走和闪转腾挪。"
+    },
+    {
+      "id": "medicine_satchel",
+      "name": "药囊",
+      "type": "equipment",
+      "slot": "accessory",
+      "price": 45,
+      "stats": { "maxMp": 10, "insight": 1 },
+      "desc": "药王谷弟子常备药囊，便于携药与稳息。"
+    },
+    {
+      "id": "tianyue_guard_robe",
+      "name": "天岳护袍",
+      "type": "equipment",
+      "slot": "armor",
+      "price": 48,
+      "stats": { "defense": 4, "maxHp": 14 },
+      "desc": "朴素却结实，天岳外门弟子常穿。"
+    },
+    {
+      "id": "tianyue_sword_token",
+      "name": "天岳剑令",
+      "type": "equipment",
+      "slot": "accessory",
+      "price": 0,
+      "stats": { "attack": 2, "insight": 1 },
+      "desc": "得天岳门中认可者方可持有。"
+    },
+    {
+      "id": "shadow_mask",
+      "name": "玄衣夜面",
+      "type": "equipment",
+      "slot": "accessory",
+      "price": 0,
+      "stats": { "agility": 3, "attack": 1 },
+      "desc": "暗纹轻薄，入夜后几乎与阴影融为一体。"
+    },
+    {
+      "id": "medicine_robe",
+      "name": "药王青衫",
+      "type": "equipment",
+      "slot": "armor",
+      "price": 0,
+      "stats": { "maxHp": 10, "maxMp": 8, "defense": 2 },
+      "desc": "谷中青衫，绣有草木纹理。"
+    }
+  ]
+}

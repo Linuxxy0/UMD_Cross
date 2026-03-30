@@ -1,0 +1,1083 @@
+{
+  "events": [
+    {
+      "id": "evt_intro_awake",
+      "title": "破庙苏醒",
+      "type": "主线",
+      "desc": "你在冷雨声中睁眼，半截残碑倒在身旁。记忆里最后一幕还是现代城市的霓虹，而此刻鼻间只有泥土与血腥。门外忽然传来脚步声。",
+      "choices": [
+        {
+          "text": "握紧木棍，推门查看",
+          "effects": [
+            {
+              "type": "gain_reputation",
+              "value": 1
+            },
+            {
+              "type": "battle",
+              "enemyId": "bandit_scout",
+              "onWinEventId": "evt_intro_after_battle",
+              "onLoseEndingId": "ending_defeat"
+            }
+          ]
+        },
+        {
+          "text": "先藏在神龛后观察",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 6
+            }
+          ],
+          "next": "evt_intro_hidden"
+        }
+      ]
+    },
+    {
+      "id": "evt_intro_after_battle",
+      "title": "陌生人的第一刀",
+      "type": "主线",
+      "desc": "盗匪倒下后，你从他腰间摸出一张粗糙地图。图上用朱砂圈出了青石镇与破庙之间的一道裂谷，旁边写着：『门将开。』",
+      "choices": [
+        {
+          "text": "收起地图，前往青石镇",
+          "effects": [
+            {
+              "type": "gain_money",
+              "value": 8
+            },
+            {
+              "type": "travel",
+              "nodeId": "qingshi_town"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_intro_hidden",
+      "title": "偷听来的线索",
+      "type": "主线",
+      "desc": "来人并非盗匪，而是一个负伤的少年。他口中反复提到『青石镇的说书人知道破庙的旧闻』，随后昏倒在门前。你从他袖中发现一枚刻着陌生纹路的铜片。",
+      "choices": [
+        {
+          "text": "带上铜片，护送他去青石镇",
+          "effects": [
+            {
+              "type": "gain_reputation",
+              "value": 2
+            },
+            {
+              "type": "add_item",
+              "itemId": "copper_token"
+            },
+            {
+              "type": "travel",
+              "nodeId": "qingshi_town"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_town_rumor",
+      "title": "茶摊流言",
+      "type": "支线",
+      "rewardsHint": "少量银两 / 主线线索 / 势力传闻",
+      "desc": "茶摊上的老者提到黑风山、夜市渡口和药王谷的怪闻。他盯着你看了很久，像是看出了你与常人不同。",
+      "choices": [
+        {
+          "text": "留下几枚铜板，继续打听",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 6
+            },
+            {
+              "type": "gain_reputation",
+              "value": 1
+            },
+            {
+              "type": "flag",
+              "key": "heard_rumor",
+              "value": true
+            }
+          ]
+        },
+        {
+          "text": "顺着消息去夜市渡口",
+          "effects": [
+            {
+              "type": "travel",
+              "nodeId": "night_market"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_doctor_letter",
+      "title": "神秘医帖",
+      "type": "奇遇",
+      "rewardsHint": "恢复状态 / 学习武学",
+      "desc": "客栈掌柜递给你一张被人遗落的医帖。上面记载着一段基础吐纳法，落款却不是这个时代的字样，像是被后来的人模仿出来的。",
+      "choices": [
+        {
+          "text": "照着口诀尝试运息",
+          "effects": [
+            {
+              "type": "heal",
+              "hp": 20,
+              "mp": 18
+            },
+            {
+              "type": "learn_skill",
+              "skillId": "inner_breath"
+            },
+            {
+              "type": "gain_exp",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "text": "把医帖转赠给药师换好感",
+          "effects": [
+            {
+              "type": "gain_faction_rep",
+              "factionId": "yaowang",
+              "value": 4
+            },
+            {
+              "type": "gain_money",
+              "value": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_caravan_help",
+      "title": "镖车陷泥",
+      "type": "支线",
+      "rewardsHint": "银两 / 装备",
+      "desc": "一辆小镖车陷进河边泥地，赶车人急得满头汗。你上前帮忙后，对方惊讶于你的力气，表示愿意谢你一件旧装备。",
+      "choices": [
+        {
+          "text": "收下旧布衣与谢礼",
+          "effects": [
+            {
+              "type": "add_item",
+              "itemId": "cloth_robe"
+            },
+            {
+              "type": "gain_money",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "text": "不要报酬，只问洛川怪事",
+          "effects": [
+            {
+              "type": "gain_reputation",
+              "value": 2
+            },
+            {
+              "type": "gain_exp",
+              "value": 8
+            },
+            {
+              "type": "flag",
+              "key": "heard_luochuan",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_bandit_ambush",
+      "title": "山道伏击",
+      "type": "战斗",
+      "rewardsHint": "经验 / 银两 / 主线推进",
+      "desc": "你刚走上山道，草丛中就有人低喝一声。黑风山盗匪拦住去路，看样子不打算让你全身而退。",
+      "choices": [
+        {
+          "text": "拔刀迎战",
+          "effects": [
+            {
+              "type": "battle",
+              "enemyId": "bandit_brute",
+              "onWinEventId": "evt_mountain_relic",
+              "onLoseEndingId": "ending_defeat"
+            }
+          ]
+        },
+        {
+          "text": "退回青石镇",
+          "effects": [
+            {
+              "type": "travel",
+              "nodeId": "qingshi_town"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_hidden_manual",
+      "title": "石缝中的残卷",
+      "type": "奇遇",
+      "rewardsHint": "新武学 / 装备",
+      "desc": "山壁裂隙里藏着一本残破刀谱，旁边还压着一柄磨损却可用的短兵。刀势不算高深，却胜在迅捷。",
+      "choices": [
+        {
+          "text": "将这一式记下，并带走兵刃",
+          "effects": [
+            {
+              "type": "learn_skill",
+              "skillId": "swift_slash"
+            },
+            {
+              "type": "add_item",
+              "itemId": "bronze_dagger"
+            },
+            {
+              "type": "gain_exp",
+              "value": 12
+            }
+          ]
+        },
+        {
+          "text": "不浪费时间，继续赶路",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_mountain_relic",
+      "title": "崖边遗物",
+      "type": "主线",
+      "rewardsHint": "界门线索 / 势力关注",
+      "desc": "击退敌人后，你在崖边看见一块不属于这个时代的金属碎片。碎片表面微微发亮，像是某种设备的外壳。就在你触碰它时，耳边忽然响起现代电子设备的短促蜂鸣。",
+      "choices": [
+        {
+          "text": "收起碎片，回青石镇整理思绪",
+          "effects": [
+            {
+              "type": "flag",
+              "key": "found_relic",
+              "value": true
+            },
+            {
+              "type": "gain_reputation",
+              "value": 2
+            },
+            {
+              "type": "travel",
+              "nodeId": "qingshi_town"
+            }
+          ]
+        },
+        {
+          "text": "向天岳山门求证此物来历",
+          "effects": [
+            {
+              "type": "flag",
+              "key": "found_relic",
+              "value": true
+            },
+            {
+              "type": "travel",
+              "nodeId": "tianyue_gate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_camp_plunder",
+      "title": "匪营余火",
+      "type": "支线",
+      "rewardsHint": "银两 / 防具",
+      "desc": "你沿着烟味找到一处废弃匪营。篝火未灭，显然有人刚刚离开。帐篷里散着几件还能用的护具。",
+      "choices": [
+        {
+          "text": "快速搜走能用的东西",
+          "effects": [
+            {
+              "type": "add_item",
+              "itemId": "leather_guard"
+            },
+            {
+              "type": "gain_money",
+              "value": 12
+            }
+          ]
+        },
+        {
+          "text": "不贪恋物资，留下记号给路人",
+          "effects": [
+            {
+              "type": "gain_reputation",
+              "value": 2
+            },
+            {
+              "type": "gain_exp",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_swordsman_duel",
+      "title": "古道试锋",
+      "type": "战斗",
+      "rewardsHint": "名望 / 经验 / 势力声望",
+      "desc": "古道尽头，一名年轻剑客拦住你。他说你身上带着『不属于此界的味道』，要试试你的身手。你察觉他并无杀意，更像是试探。",
+      "choices": [
+        {
+          "text": "应战",
+          "effects": [
+            {
+              "type": "battle",
+              "enemyId": "young_swordsman",
+              "onWinEventId": "evt_gate_echo",
+              "onLoseEndingId": "ending_defeat"
+            }
+          ]
+        },
+        {
+          "text": "婉拒切磋，返回青石镇",
+          "effects": [
+            {
+              "type": "travel",
+              "nodeId": "qingshi_town"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_strange_merchant",
+      "title": "古怪商贩",
+      "type": "支线",
+      "rewardsHint": "恢复 / 物资 / 暗线",
+      "desc": "一名自称走遍南北的商贩盯着你看了很久，忽然压低声音说：『若你来自门外，那这包药粉或这双靴子，总有一样能救你一命。』",
+      "choices": [
+        {
+          "text": "花 10 银两买下药粉",
+          "effects": [
+            {
+              "type": "spend_money",
+              "value": 10
+            },
+            {
+              "type": "add_item",
+              "itemId": "bandage"
+            },
+            {
+              "type": "add_item",
+              "itemId": "herbal_pill"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "money_gte",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "text": "花 18 银两买下快靴",
+          "effects": [
+            {
+              "type": "spend_money",
+              "value": 18
+            },
+            {
+              "type": "add_item",
+              "itemId": "traveler_boots"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "money_gte",
+              "value": 18
+            }
+          ]
+        },
+        {
+          "text": "婉拒，继续赶路",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_fallen_disciple",
+      "title": "受伤弟子",
+      "type": "支线",
+      "rewardsHint": "势力声望 / 道具",
+      "desc": "路边一名负伤弟子正压着伤口不让毒血扩散。他腰间挂着药王谷的牌子，身旁却散落着天岳弟子的佩剑木牌。",
+      "choices": [
+        {
+          "text": "用绷带帮他止血",
+          "effects": [
+            {
+              "type": "gain_faction_rep",
+              "factionId": "yaowang",
+              "value": 5
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "tianyue",
+              "value": 3
+            },
+            {
+              "type": "gain_reputation",
+              "value": 1
+            }
+          ],
+          "conditions": [
+            {
+              "type": "has_item",
+              "value": "bandage"
+            }
+          ]
+        },
+        {
+          "text": "替他去附近呼救",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 8
+            },
+            {
+              "type": "travel",
+              "nodeId": "yaowang_outer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_night_market_mask",
+      "title": "夜市假面",
+      "type": "奇遇",
+      "rewardsHint": "装备 / 玄衣线索",
+      "desc": "摊主只卖面具，不卖身份。他从箱底取出一张暗纹夜面，轻声道：『戴上它，你就不是白天的那个人了。』",
+      "choices": [
+        {
+          "text": "买下面具",
+          "effects": [
+            {
+              "type": "spend_money",
+              "value": 14
+            },
+            {
+              "type": "add_item",
+              "itemId": "shadow_mask"
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "xuanyi",
+              "value": 4
+            }
+          ],
+          "conditions": [
+            {
+              "type": "money_gte",
+              "value": 14
+            }
+          ]
+        },
+        {
+          "text": "只记下摊主的话",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_shadow_contact",
+      "title": "影中来信",
+      "type": "支线",
+      "rewardsHint": "玄衣声望 / 战斗",
+      "desc": "一封未署名短笺塞进你袖口：『若想知道谁也在找界门，今夜渡口西侧见。』你按时赴约，却先闻到兵刃出鞘的冷意。",
+      "choices": [
+        {
+          "text": "去会会对方",
+          "effects": [
+            {
+              "type": "battle",
+              "enemyId": "market_assassin",
+              "onWinEventId": "evt_shadow_offer",
+              "onLoseEndingId": "ending_defeat"
+            }
+          ]
+        },
+        {
+          "text": "不冒险，离开夜市",
+          "effects": [
+            {
+              "type": "travel",
+              "nodeId": "qingshi_town"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_shadow_offer",
+      "title": "影中邀约",
+      "type": "势力",
+      "desc": "刺客被你击退后，真正的接头人这才从阴影里现身。对方自称乌九，表示玄衣楼对你的来历和裂隙很感兴趣。",
+      "choices": [
+        {
+          "text": "接受夜面的馈赠",
+          "effects": [
+            {
+              "type": "add_item",
+              "itemId": "shadow_mask"
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "xuanyi",
+              "value": 6
+            },
+            {
+              "type": "flag",
+              "key": "shadow_met",
+              "value": true
+            }
+          ]
+        },
+        {
+          "text": "保持距离，只交换消息",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 10
+            },
+            {
+              "type": "flag",
+              "key": "shadow_met",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_xuanyi_offer",
+      "title": "玄衣楼的试探",
+      "type": "势力",
+      "desc": "乌九坐在渡口暗处，对你笑得看不出真假。『若愿替我们听风辨影，夜里的路会比白天更快。』",
+      "choices": [
+        {
+          "text": "加入玄衣楼外围",
+          "effects": [
+            {
+              "type": "join_faction",
+              "factionId": "xuanyi"
+            },
+            {
+              "type": "learn_skill",
+              "skillId": "shadow_step"
+            },
+            {
+              "type": "add_item",
+              "itemId": "shadow_mask"
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "xuanyi",
+              "value": 10
+            }
+          ],
+          "conditions": [
+            {
+              "type": "faction_none"
+            }
+          ]
+        },
+        {
+          "text": "我已有归属，不再答应",
+          "effects": [
+            {
+              "type": "gain_faction_rep",
+              "factionId": "xuanyi",
+              "value": 2
+            }
+          ],
+          "conditions": [
+            {
+              "type": "not_faction_none"
+            }
+          ]
+        },
+        {
+          "text": "暂不表态",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_tianyue_test",
+      "title": "山门试剑",
+      "type": "势力",
+      "rewardsHint": "天岳声望 / 武学",
+      "desc": "守门弟子将木剑抛给你，要你走完三招。『若连山门都过不去，就别提什么追查界门。』",
+      "choices": [
+        {
+          "text": "接剑应试",
+          "effects": [
+            {
+              "type": "battle",
+              "enemyId": "sect_examiner",
+              "onWinEventId": "evt_tianyue_pass",
+              "onLoseEndingId": "ending_defeat"
+            }
+          ]
+        },
+        {
+          "text": "先退下练练",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_tianyue_pass",
+      "title": "剑意留名",
+      "type": "势力",
+      "desc": "岳清岚站在山门高处看完了你的试剑。她没有多说，只让人递来一枚剑令与一柄合手的长剑。",
+      "choices": [
+        {
+          "text": "收下剑令",
+          "effects": [
+            {
+              "type": "add_item",
+              "itemId": "steel_sword"
+            },
+            {
+              "type": "add_item",
+              "itemId": "tianyue_sword_token"
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "tianyue",
+              "value": 8
+            },
+            {
+              "type": "flag",
+              "key": "tianyue_approved",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_tianyue_join",
+      "title": "天岳执事问话",
+      "type": "势力",
+      "desc": "岳清岚直视着你：『心不正者持剑，剑只会更快地害人。若愿守规矩，可先入外门。』",
+      "choices": [
+        {
+          "text": "拜入天岳外门",
+          "effects": [
+            {
+              "type": "join_faction",
+              "factionId": "tianyue"
+            },
+            {
+              "type": "learn_skill",
+              "skillId": "tianyue_sword"
+            },
+            {
+              "type": "add_item",
+              "itemId": "tianyue_sword_token"
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "tianyue",
+              "value": 10
+            }
+          ],
+          "conditions": [
+            {
+              "type": "faction_none"
+            }
+          ]
+        },
+        {
+          "text": "已有门路，只借山门一用",
+          "effects": [
+            {
+              "type": "gain_faction_rep",
+              "factionId": "tianyue",
+              "value": 2
+            }
+          ],
+          "conditions": [
+            {
+              "type": "not_faction_none"
+            }
+          ]
+        },
+        {
+          "text": "先记下这份好意",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_guard_patrol",
+      "title": "山门巡守",
+      "type": "支线",
+      "rewardsHint": "天岳声望 / 防具",
+      "desc": "山门巡守缺一人，执事让你帮忙清点山路脚印。忙完后，一名弟子递来一件旧护袍。",
+      "choices": [
+        {
+          "text": "接下护袍与这份差事",
+          "effects": [
+            {
+              "type": "add_item",
+              "itemId": "tianyue_guard_robe"
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "tianyue",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "text": "谢绝，只问最近有没有人来查裂隙",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 8
+            },
+            {
+              "type": "flag",
+              "key": "tianyue_clue",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_yaowang_patients",
+      "title": "诊棚急症",
+      "type": "势力",
+      "rewardsHint": "药王声望 / 装备",
+      "desc": "外谷诊棚忙得不可开交，白茯正缺人照看药炉。她见你手稳心细，便临时让你帮忙配药。",
+      "choices": [
+        {
+          "text": "留下帮忙",
+          "effects": [
+            {
+              "type": "gain_faction_rep",
+              "factionId": "yaowang",
+              "value": 6
+            },
+            {
+              "type": "add_item",
+              "itemId": "medicine_satchel"
+            },
+            {
+              "type": "heal",
+              "hp": 16,
+              "mp": 12
+            }
+          ]
+        },
+        {
+          "text": "只向白茯询问怪病与异象",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 8
+            },
+            {
+              "type": "flag",
+              "key": "yaowang_clue",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_herb_gather",
+      "title": "雾谷采药",
+      "type": "奇遇",
+      "rewardsHint": "恢复道具 / 药王声望",
+      "desc": "薄雾中一株药材泛着微光，像被裂隙里的冷气浸过。白茯提醒你，小心根须附近的毒虫。",
+      "choices": [
+        {
+          "text": "谨慎采摘",
+          "effects": [
+            {
+              "type": "add_item",
+              "itemId": "herbal_pill"
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "yaowang",
+              "value": 3
+            },
+            {
+              "type": "gain_exp",
+              "value": 6
+            }
+          ]
+        },
+        {
+          "text": "嫌麻烦，转身离开",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_yaowang_join",
+      "title": "药王谷的青衫",
+      "type": "势力",
+      "desc": "沈素问翻看了你的脉象很久，最终将一件青衫与针诀递到你面前。『若要查门外之物，先学会看清活人和经脉。』",
+      "choices": [
+        {
+          "text": "留在药王谷外谷帮忙",
+          "effects": [
+            {
+              "type": "join_faction",
+              "factionId": "yaowang"
+            },
+            {
+              "type": "learn_skill",
+              "skillId": "meridian_needle"
+            },
+            {
+              "type": "add_item",
+              "itemId": "medicine_robe"
+            },
+            {
+              "type": "gain_faction_rep",
+              "factionId": "yaowang",
+              "value": 10
+            }
+          ],
+          "conditions": [
+            {
+              "type": "faction_none"
+            }
+          ]
+        },
+        {
+          "text": "谢过好意，但先继续江湖路",
+          "effects": [
+            {
+              "type": "gain_faction_rep",
+              "factionId": "yaowang",
+              "value": 2
+            },
+            {
+              "type": "heal",
+              "hp": 10,
+              "mp": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_gate_whisper",
+      "title": "裂隙低语",
+      "type": "主线",
+      "rewardsHint": "终局门槛提示",
+      "desc": "破庙深处传来低沉回响，像有人隔着玻璃敲击你的名字。你伸手时，只摸到冰冷的风。也许你还缺少某些关键线索。",
+      "choices": [
+        {
+          "text": "记下这次异常，先去别处追查",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_gate_echo",
+      "title": "界门回响",
+      "type": "主线",
+      "rewardsHint": "终局推进 / 门派路线分化",
+      "desc": "你再次回到破庙，铜片与金属碎片同时发热。残碑后方浮现短暂的蓝白光纹，像是现代屏幕损坏时的裂光。你终于确认：这个世界与现实之间，存在一道正在不稳定开启的门。",
+      "choices": [
+        {
+          "text": "决定继续追查真相",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 18
+            }
+          ],
+          "next": "evt_final_choice",
+          "conditions": [
+            {
+              "type": "flag",
+              "value": "found_relic"
+            }
+          ]
+        },
+        {
+          "text": "借玄衣楼的网络掌控消息与界门",
+          "effects": [
+            {
+              "type": "ending",
+              "endingId": "ending_shadow"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "faction_is",
+              "value": "xuanyi"
+            },
+            {
+              "type": "flag",
+              "value": "found_relic"
+            }
+          ]
+        },
+        {
+          "text": "先在江湖中站稳脚跟",
+          "effects": [
+            {
+              "type": "ending",
+              "endingId": "ending_master"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_final_choice",
+      "title": "门缝之前",
+      "type": "终局",
+      "desc": "裂隙逐渐扩大，冰冷而熟悉的现代空气从门缝另一端涌来。你意识到，这或许只是诸天裂隙中的第一道门。现在，你必须做出选择。",
+      "choices": [
+        {
+          "text": "迈向回归现实的裂隙",
+          "effects": [
+            {
+              "type": "ending",
+              "endingId": "ending_return"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flag",
+              "value": "found_relic"
+            }
+          ]
+        },
+        {
+          "text": "留下来，掌控这道门的秘密",
+          "effects": [
+            {
+              "type": "ending",
+              "endingId": "ending_truth"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flag",
+              "value": "found_relic"
+            }
+          ]
+        },
+        {
+          "text": "强行触碰裂隙回声",
+          "effects": [
+            {
+              "type": "battle",
+              "enemyId": "temple_echo",
+              "onWinEventId": "evt_after_echo_win",
+              "onLoseEndingId": "ending_defeat"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flag",
+              "value": "found_relic"
+            }
+          ]
+        },
+        {
+          "text": "裂隙仍不稳定，先收敛气息离开",
+          "effects": [
+            {
+              "type": "gain_exp",
+              "value": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_after_echo_win",
+      "title": "回声碎裂",
+      "type": "终局",
+      "desc": "裂隙回声被你击散后，门缝短暂稳定。你终于能清楚看见另一端的霓虹天际，也看见更多世界的残影正依次闪过。",
+      "choices": [
+        {
+          "text": "记住这些世界，准备下一次穿越",
+          "effects": [
+            {
+              "type": "ending",
+              "endingId": "ending_truth"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

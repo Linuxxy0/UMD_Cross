@@ -1,0 +1,32 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#07101A"/>
+  <rect x="44" y="44" width="1512" height="812" rx="32" fill="#0D1725" stroke="#F5D17E" stroke-opacity="0.12"/>
+  <text x="92" y="118" fill="#F5D17E" font-size="22" font-family="Microsoft YaHei, sans-serif">EVENT / BATTLE FLOW</text>
+  <text x="92" y="184" fill="#F7EFD9" font-size="58" font-weight="700" font-family="Microsoft YaHei, sans-serif">事件与战斗流程页</text>
+  <rect x="92" y="238" width="658" height="570" rx="28" fill="#121F31" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="126" y="298" fill="#F7EFD9" font-size="30" font-family="Microsoft YaHei, sans-serif">剧情事件</text>
+  <text x="126" y="356" fill="#B5C1AF" font-size="22" font-family="Microsoft YaHei, sans-serif">破庙外的雨脚未歇，你听见庙门前有兵刃拖地的轻响。</text>
+  <rect x="126" y="412" width="590" height="92" rx="18" fill="#0F1A28" stroke="#F5D17E" stroke-opacity="0.16"/>
+  <text x="154" y="462" fill="#F5D17E" font-size="24" font-family="Microsoft YaHei, sans-serif">选项一：屏息藏身，先看清来者</text>
+  <rect x="126" y="528" width="590" height="92" rx="18" fill="#0F1A28" stroke="#6AD2FF" stroke-opacity="0.18"/>
+  <text x="154" y="578" fill="#8EDFFF" font-size="24" font-family="Microsoft YaHei, sans-serif">选项二：推门应对，主动接战</text>
+  <rect x="126" y="644" width="590" height="92" rx="18" fill="#0F1A28" stroke="#9FDCA7" stroke-opacity="0.20"/>
+  <text x="154" y="694" fill="#9FDCA7" font-size="24" font-family="Microsoft YaHei, sans-serif">选项三：绕至侧窗，寻找脱身路线</text>
+  <rect x="804" y="238" width="652" height="570" rx="28" fill="#121F31" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="838" y="298" fill="#F7EFD9" font-size="30" font-family="Microsoft YaHei, sans-serif">回合制战斗</text>
+  <rect x="838" y="344" width="258" height="164" rx="20" fill="#0F1A28" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="910" y="402" fill="#F7EFD9" font-size="28" font-family="Microsoft YaHei, sans-serif">玩家</text>
+  <text x="878" y="444" fill="#B5C1AF" font-size="20" font-family="Microsoft YaHei, sans-serif">气血 / 内力 / 武学</text>
+  <rect x="1168" y="344" width="258" height="164" rx="20" fill="#0F1A28" stroke="#F18E8E" stroke-opacity="0.20"/>
+  <text x="1240" y="402" fill="#F7EFD9" font-size="28" font-family="Microsoft YaHei, sans-serif">敌人</text>
+  <text x="1220" y="444" fill="#B5C1AF" font-size="20" font-family="Microsoft YaHei, sans-serif">山匪 / 杀手 / 异象</text>
+  <rect x="838" y="564" width="136" height="82" rx="16" fill="#0F1A28" stroke="#F5D17E" stroke-opacity="0.16"/>
+  <text x="882" y="614" fill="#F5D17E" font-size="24" font-family="Microsoft YaHei, sans-serif">普攻</text>
+  <rect x="992" y="564" width="136" height="82" rx="16" fill="#0F1A28" stroke="#6AD2FF" stroke-opacity="0.16"/>
+  <text x="1036" y="614" fill="#8EDFFF" font-size="24" font-family="Microsoft YaHei, sans-serif">武学</text>
+  <rect x="1146" y="564" width="136" height="82" rx="16" fill="#0F1A28" stroke="#FFFFFF" stroke-opacity="0.12"/>
+  <text x="1190" y="614" fill="#F7EFD9" font-size="24" font-family="Microsoft YaHei, sans-serif">防御</text>
+  <rect x="1300" y="564" width="136" height="82" rx="16" fill="#0F1A28" stroke="#9FDCA7" stroke-opacity="0.20"/>
+  <text x="1344" y="614" fill="#9FDCA7" font-size="24" font-family="Microsoft YaHei, sans-serif">道具</text>
+  <text x="838" y="716" fill="#B5C1AF" font-size="21" font-family="Microsoft YaHei, sans-serif">配置驱动的事件与战斗可以持续追加，而无需重构主工程。</text>
+</svg>

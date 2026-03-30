@@ -1,0 +1,76 @@
+{
+  "enemies": [
+    {
+      "id": "bandit_scout",
+      "name": "盗匪哨探",
+      "type": "人形",
+      "hp": 42,
+      "maxHp": 42,
+      "mp": 0,
+      "maxMp": 0,
+      "attack": 8,
+      "defense": 2,
+      "rewards": { "money": 8, "exp": 10 }
+    },
+    {
+      "id": "bandit_brute",
+      "name": "黑风山悍匪",
+      "type": "人形",
+      "hp": 66,
+      "maxHp": 66,
+      "mp": 0,
+      "maxMp": 0,
+      "attack": 12,
+      "defense": 4,
+      "rewards": { "money": 12, "exp": 16 }
+    },
+    {
+      "id": "young_swordsman",
+      "name": "试剑少年",
+      "type": "人形",
+      "hp": 78,
+      "maxHp": 78,
+      "mp": 12,
+      "maxMp": 12,
+      "attack": 14,
+      "defense": 5,
+      "rewards": { "money": 16, "exp": 22 }
+    },
+    {
+      "id": "market_assassin",
+      "name": "夜市刺客",
+      "type": "人形",
+      "hp": 84,
+      "maxHp": 84,
+      "mp": 10,
+      "maxMp": 10,
+      "attack": 16,
+      "defense": 5,
+      "rewards": { "money": 20, "exp": 24 }
+    },
+    {
+      "id": "sect_examiner",
+      "name": "守门弟子",
+      "type": "人形",
+      "hp": 88,
+      "maxHp": 88,
+      "mp": 18,
+      "maxMp": 18,
+      "attack": 15,
+      "defense": 6,
+      "rewards": { "money": 18, "exp": 24 }
+    },
+    {
+      "id": "temple_echo",
+      "name": "裂隙回声",
+      "type": "异象",
+      "hp": 108,
+      "maxHp": 108,
+      "mp": 20,
+      "maxMp": 20,
+      "attack": 18,
+      "defense": 7,
+      "rewards": { "money": 0, "exp": 30 }
+    }
+  ]
+}

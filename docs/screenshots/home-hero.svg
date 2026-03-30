@@ -1,0 +1,37 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="800" y1="0" x2="800" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0C1831"/>
+      <stop offset="1" stop-color="#060C15"/>
+    </linearGradient>
+    <radialGradient id="moonGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1250 150) rotate(90) scale(180 180)">
+      <stop stop-color="#F4D48A" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#F4D48A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect x="52" y="44" width="1496" height="812" rx="30" fill="#09121F" fill-opacity="0.82" stroke="#F5D17E" stroke-opacity="0.15"/>
+  <circle cx="1240" cy="160" r="78" fill="#F5D17E" fill-opacity="0.18"/>
+  <circle cx="1240" cy="160" r="180" fill="url(#moonGlow)"/>
+  <path d="M0 715L245 470L420 730L630 420L905 760L1120 470L1360 760L1600 530V900H0V715Z" fill="#112338"/>
+  <path d="M0 790L215 610L385 770L575 560L735 790L955 580L1170 810L1420 640L1600 785V900H0V790Z" fill="#0A1626"/>
+  <text x="112" y="160" fill="#F5D17E" font-size="22" font-family="Microsoft YaHei, sans-serif" letter-spacing="4">正式公开仓库 / GITHUB PAGES READY</text>
+  <text x="112" y="250" fill="#F7EFD9" font-size="78" font-weight="700" font-family="Microsoft YaHei, sans-serif">一念穿越：江湖初卷</text>
+  <text x="112" y="326" fill="#D8C8A0" font-size="28" font-family="Microsoft YaHei, sans-serif">第一世界已经开启。你会成为宗师、棋手，还是找到回到现代的裂隙？</text>
+  <rect x="112" y="392" width="152" height="44" rx="22" fill="#F5D17E" fill-opacity="0.16" stroke="#F5D17E" stroke-opacity="0.34"/>
+  <text x="152" y="420" fill="#F5D17E" font-size="18" font-family="Microsoft YaHei, sans-serif">剧情事件</text>
+  <rect x="278" y="392" width="152" height="44" rx="22" fill="#6AD2FF" fill-opacity="0.12" stroke="#6AD2FF" stroke-opacity="0.26"/>
+  <text x="318" y="420" fill="#8EDFFF" font-size="18" font-family="Microsoft YaHei, sans-serif">门派成长</text>
+  <rect x="444" y="392" width="152" height="44" rx="22" fill="#F5D17E" fill-opacity="0.10" stroke="#F5D17E" stroke-opacity="0.20"/>
+  <text x="486" y="420" fill="#F5D17E" font-size="18" font-family="Microsoft YaHei, sans-serif">多结局</text>
+  <rect x="112" y="488" width="620" height="218" rx="24" fill="#101D2E" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="142" y="542" fill="#F7EFD9" font-size="30" font-family="Microsoft YaHei, sans-serif">品牌首屏文案</text>
+  <text x="142" y="596" fill="#B5C1AF" font-size="22" font-family="Microsoft YaHei, sans-serif">现代灵魂坠入大晟江湖，在门派试探、夜市暗线与界门异象之间，</text>
+  <text x="142" y="632" fill="#B5C1AF" font-size="22" font-family="Microsoft YaHei, sans-serif">走出属于自己的第一段穿越旅程。</text>
+  <text x="142" y="688" fill="#F5D17E" font-size="20" font-family="Microsoft YaHei, sans-serif">版本 1.1.0 · 首个穿越世界：武侠 · 适合 GitHub 仓库直接发布</text>
+  <rect x="980" y="420" width="430" height="230" rx="26" fill="#0E1B2A" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="1016" y="478" fill="#F7EFD9" font-size="28" font-family="Microsoft YaHei, sans-serif">势力与成长</text>
+  <text x="1016" y="528" fill="#B5C1AF" font-size="20" font-family="Microsoft YaHei, sans-serif">天岳剑宗 / 玄衣楼 / 药王谷</text>
+  <text x="1016" y="562" fill="#B5C1AF" font-size="20" font-family="Microsoft YaHei, sans-serif">装备系统 / 事件分支 / 本地存档</text>
+  <text x="1016" y="616" fill="#F5D17E" font-size="19" font-family="Microsoft YaHei, sans-serif">“第一世界已经开启，回头路未必比前路更近。”</text>
+</svg>

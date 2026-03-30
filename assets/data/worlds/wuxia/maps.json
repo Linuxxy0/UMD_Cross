@@ -1,0 +1,74 @@
+{
+  "nodes": [
+    {
+      "id": "qingshi_town",
+      "name": "青石镇",
+      "type": "town",
+      "danger": 1,
+      "desc": "小镇沿河而建，茶摊、客栈和旧镖局散落其间，是初入江湖最安全的落脚点。",
+      "links": ["blackwind_hill", "luochuan_road", "night_market"],
+      "eventPool": ["evt_town_rumor", "evt_doctor_letter", "evt_caravan_help"],
+      "merchantPool": ["bandage", "herbal_pill", "cloth_robe", "traveler_boots"]
+    },
+    {
+      "id": "blackwind_hill",
+      "name": "黑风山",
+      "type": "wild",
+      "danger": 2,
+      "desc": "山道险峻，盗匪盘踞，偶尔还能看到不属于这个时代的奇异碎片。",
+      "links": ["qingshi_town", "broken_temple", "tianyue_gate"],
+      "eventPool": ["evt_bandit_ambush", "evt_hidden_manual", "evt_mountain_relic", "evt_camp_plunder"]
+    },
+    {
+      "id": "luochuan_road",
+      "name": "洛川古道",
+      "type": "route",
+      "danger": 2,
+      "desc": "通往洛川方向的古道尘土飞扬，往来旅人携带着各色消息与欲望。",
+      "links": ["qingshi_town", "yaowang_outer", "broken_temple"],
+      "eventPool": ["evt_swordsman_duel", "evt_strange_merchant", "evt_fallen_disciple"]
+    },
+    {
+      "id": "night_market",
+      "name": "夜市渡口",
+      "type": "market",
+      "danger": 2,
+      "desc": "渡口白日平平无奇，夜里却会亮起一串幽灯。消息、违禁物和秘密都在此流动。",
+      "links": ["qingshi_town", "broken_temple"],
+      "eventPool": ["evt_night_market_mask", "evt_shadow_contact", "evt_strange_merchant"],
+      "merchantPool": ["bandage", "smoke_pellet", "bronze_dagger", "leather_guard"],
+      "settlementEventId": "evt_xuanyi_offer"
+    },
+    {
+      "id": "tianyue_gate",
+      "name": "天岳山门",
+      "type": "sect",
+      "danger": 2,
+      "desc": "山门高耸，石阶如剑脊直入云中。弟子往来整肃，外人很难靠近。",
+      "links": ["blackwind_hill", "broken_temple"],
+      "eventPool": ["evt_tianyue_test", "evt_swordsman_duel", "evt_guard_patrol"],
+      "merchantPool": ["bandage", "steel_sword", "tianyue_guard_robe"],
+      "settlementEventId": "evt_tianyue_join"
+    },
+    {
+      "id": "yaowang_outer",
+      "name": "药王谷外谷",
+      "type": "sect",
+      "danger": 1,
+      "desc": "山谷云雾缭绕，草木间药香浮动。外谷诊棚昼夜有人求医问药。",
+      "links": ["luochuan_road", "broken_temple"],
+      "eventPool": ["evt_yaowang_patients", "evt_herb_gather", "evt_doctor_letter"],
+      "merchantPool": ["bandage", "herbal_pill", "medicine_satchel", "medicine_robe"],
+      "settlementEventId": "evt_yaowang_join"
+    },
+    {
+      "id": "broken_temple",
+      "name": "断瓦破庙",
+      "type": "ruin",
+      "danger": 3,
+      "desc": "你苏醒过的破庙依旧阴冷，夜里像有东西从裂缝里注视着这里。",
+      "links": ["blackwind_hill", "luochuan_road", "night_market", "tianyue_gate", "yaowang_outer"],
+      "eventPool": ["evt_gate_echo", "evt_final_choice", "evt_gate_whisper"]
+    }
+  ]
+}
