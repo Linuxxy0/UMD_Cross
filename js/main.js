@@ -1,21 +1,9 @@
 (function (G) {
-  function bindSaveActions() {
-    var exportBtn = document.getElementById('btn-export-save');
-    var importBtn = document.getElementById('btn-import-save');
+  function bindSaveImport() {
     var importInput = document.getElementById('import-save-input');
-
-    exportBtn.addEventListener('click', function () {
-      if (!G.Managers.SaveManager.hasSave()) {
-        G.UI.HUD.showToast('当前没有可导出的存档。', 'warning');
-        return;
-      }
-      G.Managers.SaveManager.exportSave();
-    });
-
-    importBtn.addEventListener('click', function () {
+    G.State.requestSaveImport = function () {
       importInput.click();
-    });
-
+    };
     importInput.addEventListener('change', async function (event) {
       var file = event.target.files && event.target.files[0];
       if (!file) return;
@@ -33,7 +21,7 @@
   }
 
   window.addEventListener('DOMContentLoaded', function () {
-    bindSaveActions();
+    bindSaveImport();
 
     var game = new Phaser.Game({
       type: Phaser.AUTO,

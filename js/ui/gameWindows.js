@@ -6,7 +6,7 @@
   }
 
   function getItem(itemId) {
-    return G.Managers.PlayerManager.getItemById(itemId);
+    return G.Managers.LibraryManager.getItemById(itemId);
   }
 
   function getSkill(skillId) {
@@ -17,27 +17,16 @@
     return document.getElementById('hub-modal-root');
   }
 
+  function qualityClass(item) {
+    return 'quality-' + ((item && item.quality) || 'common');
+  }
+
   function slotLabel(slot) {
     return {
       weapon: '武器',
       armor: '护甲',
       accessory: '饰品'
     }[slot] || slot || '未知';
-  }
-
-  function itemTypeLabel(type) {
-    return {
-      equipment: '装备',
-      consumable: '消耗品',
-      quest: '任务物品'
-    }[type] || type || '未知';
-  }
-
-  function skillTypeLabel(type) {
-    return {
-      attack: '招式',
-      support: '心法'
-    }[type] || type || '武学';
   }
 
   function statLabel(key) {
@@ -47,125 +36,146 @@
       agility: '身法',
       maxHp: '气血',
       maxMp: '内力',
-      insight: '悟性'
+      insight: '悟性',
+      speed: '速度',
+      crit: '暴击'
     }[key] || key;
   }
 
-  function formatStatBlocks(stats, diffStats) {
+  function getTooltip() {
+    return document.getElementById('floating-tooltip');
+  }
+
+  function showTooltip(html, event) {
+    var tooltip = getTooltip();
+    if (!tooltip) return;
+    tooltip.innerHTML = html;
+    tooltip.classList.remove('hidden');
+    moveTooltip(event);
+  }
+
+  function moveTooltip(event) {
+    var tooltip = getTooltip();
+    if (!tooltip || tooltip.classList.contains('hidden') || !event) return;
+    var x = event.clientX + 18;
+    var y = event.clientY + 18;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  function hideTooltip() {
+    var tooltip = getTooltip();
+    if (!tooltip) return;
+    tooltip.classList.add('hidden');
+  }
+
+  function previewStatsHtml(stats, compareStats) {
     var keys = Object.keys(stats || {});
     if (!keys.length) return '<div class="empty-tip">暂无属性加成。</div>';
-    return keys.map(function (key) {
-      var diff = diffStats && typeof diffStats[key] === 'number' ? diffStats[key] : null;
-      var diffHtml = '';
-      if (diff !== null && diff !== 0) {
-        diffHtml = '<span class="stat-diff ' + (diff > 0 ? 'up' : 'down') + '">' + (diff > 0 ? '+' : '') + diff + '</span>';
-      }
-      return '<div class="preview-stat"><span>' + statLabel(key) + '</span><strong>+' + stats[key] + '</strong>' + diffHtml + '</div>';
-    }).join('');
+    return '<div class="preview-stats">' + keys.map(function (key) {
+      var diff = compareStats && typeof compareStats[key] === 'number' ? compareStats[key] : 0;
+      return '<div class="preview-stat"><span>' + statLabel(key) + '</span><strong>+' + stats[key] + '</strong>' + (diff ? '<span class="stat-diff ' + (diff > 0 ? 'up' : 'down') + '">' + (diff > 0 ? '+' : '') + diff + '</span>' : '') + '</div>';
+    }).join('') + '</div>';
   }
 
-  function calcDiff(item) {
+  function compareItemToCurrent(item) {
     var player = getPlayer();
-    if (!player || !item || item.type !== 'equipment') return null;
-    var equipped = player.equipment && item.slot ? getItem(player.equipment[item.slot]) : null;
-    var currentStats = (equipped && equipped.stats) || {};
-    var nextStats = item.stats || {};
-    var keys = ['attack', 'defense', 'agility', 'maxHp', 'maxMp', 'insight'];
+    if (!player || !item || item.type !== 'equipment') return {};
+    var current = G.Managers.PlayerManager.getEquipmentDetail()[item.equipSlot || item.slot];
+    var currentStats = (current && (current.baseStats || current.stats)) || {};
+    var nextStats = item.baseStats || item.stats || {};
     var diff = {};
-    var hasDiff = false;
-    keys.forEach(function (key) {
+    Object.keys(nextStats).concat(Object.keys(currentStats)).forEach(function (key) {
+      if (Object.prototype.hasOwnProperty.call(diff, key)) return;
       var value = (nextStats[key] || 0) - (currentStats[key] || 0);
-      if (value !== 0) {
-        diff[key] = value;
-        hasDiff = true;
-      }
+      if (value) diff[key] = value;
     });
-    return hasDiff ? diff : {};
+    return diff;
   }
 
-  function previewItemHtml(item, extra) {
-    if (!item) {
-      return [
-        '<div class="window-kicker">信息面板</div>',
-        '<h3>请选择物品</h3>',
-        '<div class="empty-tip">将鼠标移到左侧装备或物品上，可在这里查看详细预览。</div>'
-      ].join('');
+  function itemPreviewHtml(entry) {
+    if (!entry || !entry.item) {
+      return '<div class="window-kicker">信息面板</div><h3>悬停条目以预览</h3><div class="empty-tip">将鼠标移动到左侧物品或装备上，可查看详细属性、穿戴变化与用途说明。</div>';
     }
-    var player = getPlayer() || {};
-    var equippedId = item.slot && player.equipment ? player.equipment[item.slot] : null;
-    var equipped = equippedId ? getItem(equippedId) : null;
-    var countHtml = extra && extra.count ? '<span class="tag">数量 x' + extra.count + '</span>' : '';
-    var priceHtml = typeof item.price === 'number' ? '<span class="tag">价格 ' + item.price + ' 银两</span>' : '';
-    var equippedHtml = equippedId === item.id ? '<span class="tag tag-gold">已装备</span>' : '';
+    var item = entry.item;
+    var tags = [
+      '<span class="tag ' + qualityClass(item) + '">' + G.Managers.LibraryManager.getQualityLabel(item.quality) + '</span>',
+      '<span class="tag">' + G.Managers.LibraryManager.getItemTypeLabel(item) + '</span>'
+    ];
+    if (entry.count > 1) tags.push('<span class="tag">数量 x' + entry.count + '</span>');
+    if (entry.equipped) tags.push('<span class="tag tag-gold">已装备</span>');
+    if (item.buyPrice || item.price) tags.push('<span class="tag">购入 ' + (item.buyPrice || item.price) + '</span>');
+    if (item.sellPrice) tags.push('<span class="tag">出售 ' + item.sellPrice + '</span>');
+
     var compareHtml = '';
     if (item.type === 'equipment') {
       compareHtml = [
         '<div class="preview-section">',
-          '<div class="preview-title">当前槽位</div>',
-          '<div class="muted">' + (equipped ? equipped.name : '未装备') + '</div>',
-        '</div>',
-        '<div class="preview-section">',
-          '<div class="preview-title">属性加成</div>',
-          '<div class="preview-stats">' + formatStatBlocks(item.stats || {}, calcDiff(item)) + '</div>',
+          '<div class="preview-title">穿戴变化</div>',
+          previewStatsHtml(item.baseStats || item.stats || {}, compareItemToCurrent(item)),
         '</div>'
       ].join('');
     }
-    return [
-      '<div class="window-kicker">' + itemTypeLabel(item.type) + '</div>',
-      '<h3>' + item.name + '</h3>',
-      '<div class="tag-list">',
-        '<span class="tag">' + itemTypeLabel(item.type) + '</span>',
-        item.slot ? '<span class="tag">' + slotLabel(item.slot) + '</span>' : '',
-        priceHtml,
-        countHtml,
-        equippedHtml,
-      '</div>',
-      '<p class="preview-desc">' + (item.desc || '暂无说明') + '</p>',
-      compareHtml,
-      '<div class="preview-section">',
-        '<div class="preview-title">操作建议</div>',
-        '<div class="muted">' + (item.type === 'equipment' ? '可直接装备到对应槽位；若已穿戴同槽装备，会以该件替换显示。' : item.type === 'consumable' ? '恢复类道具会立即生效并从背包扣除。' : '任务物品通常用于推动剧情或门派线。') + '</div>',
-      '</div>'
-    ].join('');
-  }
-
-  function previewSkillHtml(skill) {
-    if (!skill) {
-      return '<div class="window-kicker">信息面板</div><h3>请选择武学</h3><div class="empty-tip">将鼠标移到左侧武学条目上查看效果、耗蓝与定位。</div>';
+    if (item.type === 'consumable' && item.useEffects) {
+      compareHtml = '<div class="preview-section"><div class="preview-title">使用效果</div><div class="muted">' + item.useEffects.map(function (effect) { return effect.target + ' +' + effect.value; }).join(' · ') + '</div></div>';
     }
     return [
-      '<div class="window-kicker">' + skillTypeLabel(skill.type) + '</div>',
-      '<h3>' + skill.name + '</h3>',
-      '<div class="tag-list">',
-        '<span class="tag">' + skillTypeLabel(skill.type) + '</span>',
-        '<span class="tag">内力消耗 ' + (skill.mpCost || 0) + '</span>',
-        '<span class="tag">倍率 ' + (skill.power || 1) + '</span>',
-      '</div>',
-      '<p class="preview-desc">' + (skill.desc || '暂无说明') + '</p>',
-      '<div class="preview-section">',
-        '<div class="preview-title">战斗定位</div>',
-        '<div class="muted">' + (skill.type === 'support' ? '偏向恢复、稳息或强化自身。' : '主要用于在战斗中压制敌人或快速收割。') + '</div>',
-      '</div>'
+      '<div class="window-kicker">' + G.Managers.LibraryManager.getItemTypeLabel(item) + '</div>',
+      '<h3 class="' + qualityClass(item) + '">' + item.name + '</h3>',
+      '<div class="tag-list">' + tags.join('') + '</div>',
+      '<p class="preview-desc">' + (item.desc || '暂无说明') + '</p>',
+      item.requirements && item.requirements.level ? '<div class="preview-section"><div class="preview-title">穿戴条件</div><div class="muted">需要等级 ' + item.requirements.level + (item.requirements.faction ? ' · 门派 ' + item.requirements.faction : '') + '</div></div>' : '',
+      compareHtml
     ].join('');
   }
 
-  function previewNodeHtml(node, currentNodeId) {
+  function itemTooltipHtml(entry) {
+    if (!entry || !entry.item) return '';
+    var item = entry.item;
+    return [
+      '<div class="tooltip-name ' + qualityClass(item) + '">' + item.name + '</div>',
+      '<div class="tooltip-type">' + G.Managers.LibraryManager.getItemTypeLabel(item) + '</div>',
+      (item.baseStats || item.stats) ? '<div class="tooltip-stats">' + Object.keys(item.baseStats || item.stats).map(function (key) { return '<div>' + statLabel(key) + ' +' + (item.baseStats || item.stats)[key] + '</div>'; }).join('') + '</div>' : '',
+      '<div class="tooltip-desc">' + (item.desc || '暂无说明') + '</div>'
+    ].join('');
+  }
+
+  function skillPreviewHtml(skill) {
+    if (!skill) {
+      return '<div class="window-kicker">武学预览</div><h3>悬停武学</h3><div class="empty-tip">将鼠标移动到武学条目上，可查看耗蓝、倍率与定位。</div>';
+    }
+    return [
+      '<div class="window-kicker">武学信息</div>',
+      '<h3>' + skill.name + '</h3>',
+      '<div class="tag-list"><span class="tag">' + (skill.type === 'support' ? '心法' : '招式') + '</span><span class="tag">内力消耗 ' + (skill.mpCost || 0) + '</span><span class="tag">倍率 ' + (skill.power || 1) + '</span></div>',
+      '<p class="preview-desc">' + (skill.desc || '暂无说明') + '</p>',
+      '<div class="preview-section"><div class="preview-title">战斗定位</div><div class="muted">' + (skill.type === 'support' ? '用于恢复、稳息或自我强化。' : '用于快速压制敌人、形成连击突破口。') + '</div></div>'
+    ].join('');
+  }
+
+  function mapPreviewHtml(node, isCurrent) {
     if (!node) {
-      return '<div class="window-kicker">信息面板</div><h3>请选择地点</h3><div class="empty-tip">将鼠标移到左侧地图节点上，可查看危险等级、区域说明与行动建议。</div>';
+      return '<div class="window-kicker">地图预览</div><h3>悬停地点</h3><div class="empty-tip">将鼠标移动到地点条目上，可查看区域说明、危险等级与连接路线。</div>';
     }
     return [
       '<div class="window-kicker">地图节点</div>',
       '<h3>' + node.name + '</h3>',
-      '<div class="tag-list">',
-        '<span class="tag">' + G.Worlds.WuxiaRules.getNodeThemeLabel(node) + '</span>',
-        '<span class="tag">危险 ' + node.danger + '</span>',
-        node.id === currentNodeId ? '<span class="tag tag-gold">当前位置</span>' : '',
-      '</div>',
+      '<div class="tag-list"><span class="tag">危险 ' + node.danger + '</span><span class="tag">' + G.Worlds.WuxiaRules.getNodeThemeLabel(node) + '</span>' + (isCurrent ? '<span class="tag tag-gold">当前位置</span>' : '') + '</div>',
       '<p class="preview-desc">' + node.desc + '</p>',
-      '<div class="preview-section">',
-        '<div class="preview-title">可触发内容</div>',
-        '<div class="muted">事件池 ' + ((node.eventPool || []).length) + ' 条，连接 ' + ((node.links || []).length) + ' 个地点。</div>',
-      '</div>'
+      '<div class="preview-section"><div class="preview-title">区域信息</div><div class="muted">可触发事件 ' + ((node.eventPool || []).length) + ' 条 · 可前往 ' + ((node.links || []).length) + ' 个地点</div></div>'
+    ].join('');
+  }
+
+  function announcementPreviewHtml(entry) {
+    if (!entry) {
+      return '<div class="window-kicker">公告</div><h3>暂无公告</h3>';
+    }
+    return [
+      '<div class="window-kicker">版本公告</div>',
+      '<h3>版本 ' + entry.version + ' · ' + entry.title + '</h3>',
+      '<div class="tag-list"><span class="tag">发布时间 ' + entry.date + '</span>' + (entry.current ? '<span class="tag tag-gold">当前版本</span>' : '') + '</div>',
+      '<p class="preview-desc">' + (entry.summary || '') + '</p>',
+      '<div class="preview-section"><div class="preview-title">更新内容</div><div class="bullet-list">' + entry.notes.map(function (note) { return '<div>· ' + note + '</div>'; }).join('') + '</div></div>'
     ].join('');
   }
 
@@ -208,16 +218,22 @@
     }
   }
 
-  function bindHoverEntries(root, previewRoot, renderer) {
+  function bindHoverEntries(root, previewRoot, renderer, tooltipRenderer) {
     Array.prototype.slice.call(root.querySelectorAll('[data-preview-id]')).forEach(function (entry) {
-      entry.addEventListener('mouseenter', function () {
+      function activate(event) {
         var rendered = renderer(this.getAttribute('data-preview-id'));
         if (typeof rendered === 'string') previewRoot.innerHTML = rendered;
         Array.prototype.slice.call(root.querySelectorAll('.list-entry')).forEach(function (node) {
           node.classList.remove('is-active');
         });
         this.classList.add('is-active');
+        if (tooltipRenderer) showTooltip(tooltipRenderer(this.getAttribute('data-preview-id')), event);
+      }
+      entry.addEventListener('mouseenter', activate);
+      entry.addEventListener('mousemove', function (event) {
+        if (tooltipRenderer) moveTooltip(event);
       });
+      entry.addEventListener('mouseleave', hideTooltip);
       entry.addEventListener('focus', function () {
         var rendered = renderer(this.getAttribute('data-preview-id'));
         if (typeof rendered === 'string') previewRoot.innerHTML = rendered;
@@ -225,19 +241,21 @@
     });
   }
 
-  function attachInventoryActions(previewRoot, item, player) {
+  function attachInventoryActions(previewRoot, entry, player) {
+    var item = entry.item;
     var actionRow = document.createElement('div');
     actionRow.className = 'preview-actions';
 
     if (item.type === 'equipment') {
+      var equippedInSlot = player.equipment && player.equipment[item.equipSlot || item.slot] === entry.instanceId;
       var equipBtn = document.createElement('button');
       equipBtn.className = 'btn primary';
-      equipBtn.textContent = player.equipment && player.equipment[item.slot] === item.id ? '已装备' : '装备';
-      equipBtn.disabled = player.equipment && player.equipment[item.slot] === item.id;
+      equipBtn.textContent = equippedInSlot ? '卸下' : '装备';
       equipBtn.addEventListener('click', function () {
-        if (G.Managers.PlayerManager.equipItem(item.id)) {
+        var ok = equippedInSlot ? G.Managers.PlayerManager.unequipSlot(item.equipSlot || item.slot) : G.Managers.PlayerManager.equipItem(entry.instanceId || entry.itemId);
+        if (ok) {
           G.Managers.SaveManager.save({ silent: true });
-          G.UI.HUD.showToast('已装备：' + item.name, 'success');
+          G.UI.HUD.showToast((equippedInSlot ? '已卸下：' : '已装备：') + item.name, 'success');
           refreshHub('inventory');
         }
       });
@@ -249,26 +267,21 @@
       useBtn.className = 'btn primary';
       useBtn.textContent = '使用';
       useBtn.addEventListener('click', function () {
-        var effect = {
-          bandage: { hp: 35, mp: 0, message: '绷带止住了流血。' },
-          herbal_pill: { hp: 24, mp: 18, message: '药气化开，气血与内力都恢复了一些。' },
-          smoke_pellet: { hp: 0, mp: 8, message: '烟雾丸在非战斗中只能让你稍微定神。' }
-        }[item.id] || { hp: 0, mp: 0, message: '你整理了一下道具。' };
+        var useEffects = item.useEffects || [];
+        var hp = 0;
+        var mp = 0;
+        useEffects.forEach(function (effect) {
+          if (effect.type === 'recover' && effect.target === 'hp') hp += effect.value;
+          if (effect.type === 'recover' && effect.target === 'mp') mp += effect.value;
+        });
         if (G.Managers.PlayerManager.useItem(item.id)) {
-          G.Managers.PlayerManager.heal(effect.hp, effect.mp);
+          G.Managers.PlayerManager.heal(hp, mp);
           G.Managers.SaveManager.save({ silent: true });
-          G.UI.HUD.showToast(effect.message, 'success');
+          G.UI.HUD.showToast(item.name + ' 已使用', 'success');
           refreshHub('inventory');
         }
       });
       actionRow.appendChild(useBtn);
-    }
-
-    if (item.type === 'quest') {
-      var questTip = document.createElement('div');
-      questTip.className = 'muted';
-      questTip.textContent = '该物品用于剧情推进，暂时不可主动使用。';
-      actionRow.appendChild(questTip);
     }
 
     previewRoot.appendChild(actionRow);
@@ -287,65 +300,43 @@
 
     if (!summary.length) {
       left.innerHTML = '<div class="empty-tip">你的背包暂时还是空的。</div>';
-      right.innerHTML = previewItemHtml(null);
+      right.innerHTML = itemPreviewHtml(null);
       content.appendChild(left);
       content.appendChild(right);
       return content;
     }
 
-    var defaultEntry = summary[0];
     left.innerHTML = '<div class="list-stack"></div>';
     var stack = left.querySelector('.list-stack');
-
     summary.forEach(function (entry, index) {
-      if (!entry.item) return;
       var row = document.createElement('button');
-      row.className = 'list-entry item-entry' + (index === 0 ? ' is-active' : '');
+      row.className = 'list-entry item-entry ' + qualityClass(entry.item) + (index === 0 ? ' is-active' : '');
       row.setAttribute('data-preview-id', entry.id);
       row.innerHTML = [
-        '<span class="entry-main">' + entry.item.name + '</span>',
-        '<span class="entry-meta">' + itemTypeLabel(entry.item.type) + (entry.item.slot ? ' · ' + slotLabel(entry.item.slot) : '') + '</span>',
+        '<span class="entry-main">' + entry.item.name + (entry.equipped ? ' · 已装备' : '') + '</span>',
+        '<span class="entry-meta">' + G.Managers.LibraryManager.getItemTypeLabel(entry.item) + (entry.item.equipSlot || entry.item.slot ? ' · ' + slotLabel(entry.item.equipSlot || entry.item.slot) : '') + '</span>',
         '<span class="entry-count">x' + entry.count + '</span>'
       ].join('');
       row.addEventListener('click', function () {
-        right.innerHTML = previewItemHtml(entry.item, { count: entry.count });
-        attachInventoryActions(right, entry.item, player);
+        right.innerHTML = itemPreviewHtml(entry);
+        attachInventoryActions(right, entry, player);
       });
       stack.appendChild(row);
     });
 
-    right.innerHTML = previewItemHtml(defaultEntry.item, { count: defaultEntry.count });
-    attachInventoryActions(right, defaultEntry.item, player);
-    bindHoverEntries(stack, right, function (itemId) {
-      var found = summary.find(function (entry) { return entry.id === itemId; });
-      if (!found || !found.item) return previewItemHtml(null);
-      setTimeout(function () { attachInventoryActions(right, found.item, player); }, 0);
-      return previewItemHtml(found.item, { count: found.count });
+    right.innerHTML = itemPreviewHtml(summary[0]);
+    attachInventoryActions(right, summary[0], player);
+    bindHoverEntries(stack, right, function (id) {
+      var found = summary.find(function (entry) { return entry.id === id; });
+      return itemPreviewHtml(found);
+    }, function (id) {
+      var found = summary.find(function (entry) { return entry.id === id; });
+      return itemTooltipHtml(found);
     });
 
     content.appendChild(left);
     content.appendChild(right);
     return content;
-  }
-
-  function attachShopActions(previewRoot, item) {
-    var actionRow = document.createElement('div');
-    actionRow.className = 'preview-actions';
-    var buyBtn = document.createElement('button');
-    buyBtn.className = 'btn primary';
-    buyBtn.textContent = '购买';
-    buyBtn.addEventListener('click', function () {
-      var result = G.Managers.PlayerManager.buyItem(item.id);
-      if (!result.ok) {
-        G.UI.HUD.showToast(result.message, 'warning');
-        return;
-      }
-      G.Managers.SaveManager.save({ silent: true });
-      G.UI.HUD.showToast('购入：' + item.name, 'success');
-      refreshHub('shop');
-    });
-    actionRow.appendChild(buyBtn);
-    previewRoot.appendChild(actionRow);
   }
 
   function buildShopWindow() {
@@ -358,41 +349,59 @@
     right.className = 'window-preview';
 
     if (!merchantPool.length) {
-      left.innerHTML = '<div class="empty-tip">此地没有固定商人。你可以前往青石镇、夜市渡口或门派据点补给。</div>';
-      right.innerHTML = previewItemHtml(null);
+      left.innerHTML = '<div class="empty-tip">当前地点没有商人。</div>';
+      right.innerHTML = itemPreviewHtml(null);
       content.appendChild(left);
       content.appendChild(right);
       return content;
     }
 
-    var firstItem = getItem(merchantPool[0]);
+    var summary = merchantPool.map(function (itemId) {
+      return { id: itemId, itemId: itemId, item: getItem(itemId), count: 1, equipped: false };
+    }).filter(function (entry) { return !!entry.item; });
+
     left.innerHTML = '<div class="list-stack"></div>';
     var stack = left.querySelector('.list-stack');
-
-    merchantPool.forEach(function (itemId, index) {
-      var item = getItem(itemId);
-      if (!item) return;
+    summary.forEach(function (entry, index) {
       var row = document.createElement('button');
-      row.className = 'list-entry item-entry' + (index === 0 ? ' is-active' : '');
-      row.setAttribute('data-preview-id', item.id);
+      row.className = 'list-entry ' + qualityClass(entry.item) + (index === 0 ? ' is-active' : '');
+      row.setAttribute('data-preview-id', entry.id);
       row.innerHTML = [
-        '<span class="entry-main">' + item.name + '</span>',
-        '<span class="entry-meta">' + itemTypeLabel(item.type) + (item.slot ? ' · ' + slotLabel(item.slot) : '') + '</span>',
-        '<span class="entry-count">' + item.price + ' 银</span>'
+        '<span class="entry-main">' + entry.item.name + '</span>',
+        '<span class="entry-meta">' + G.Managers.LibraryManager.getItemTypeLabel(entry.item) + '</span>',
+        '<span class="entry-count">' + (entry.item.buyPrice || entry.item.price || 0) + ' 银</span>'
       ].join('');
       row.addEventListener('click', function () {
-        right.innerHTML = previewItemHtml(item);
-        attachShopActions(right, item);
+        renderShopPreview(right, entry);
       });
       stack.appendChild(row);
     });
 
-    right.innerHTML = previewItemHtml(firstItem);
-    attachShopActions(right, firstItem);
-    bindHoverEntries(stack, right, function (itemId) {
-      var item = getItem(itemId);
-      setTimeout(function () { attachShopActions(right, item); }, 0);
-      return previewItemHtml(item);
+    function renderShopPreview(root, entry) {
+      root.innerHTML = itemPreviewHtml(entry);
+      var buyBtn = document.createElement('button');
+      buyBtn.className = 'btn primary';
+      buyBtn.textContent = '购买';
+      buyBtn.addEventListener('click', function () {
+        var result = G.Managers.PlayerManager.buyItem(entry.item.id);
+        if (!result.ok) {
+          G.UI.HUD.showToast(result.message, 'warning');
+          return;
+        }
+        G.Managers.SaveManager.save({ silent: true });
+        G.UI.HUD.showToast('购入：' + entry.item.name, 'success');
+        refreshHub('shop');
+      });
+      root.appendChild(buyBtn);
+    }
+
+    renderShopPreview(right, summary[0]);
+    bindHoverEntries(stack, right, function (id) {
+      var found = summary.find(function (entry) { return entry.id === id; });
+      return itemPreviewHtml(found);
+    }, function (id) {
+      var found = summary.find(function (entry) { return entry.id === id; });
+      return itemTooltipHtml(found);
     });
 
     content.appendChild(left);
@@ -400,9 +409,9 @@
     return content;
   }
 
-  function buildSkillWindow() {
+  function buildSkillsWindow() {
     var player = getPlayer();
-    var skills = (player.learnedSkills || []).map(getSkill).filter(Boolean);
+    var learned = (player.learnedSkills || []).map(function (id) { return getSkill(id); }).filter(Boolean);
     var content = document.createElement('div');
     content.className = 'window-layout';
     var left = document.createElement('div');
@@ -410,9 +419,9 @@
     var right = document.createElement('aside');
     right.className = 'window-preview';
 
-    if (!skills.length) {
-      left.innerHTML = '<div class="empty-tip">你尚未习得新的武学。</div>';
-      right.innerHTML = previewSkillHtml(null);
+    if (!learned.length) {
+      left.innerHTML = '<div class="empty-tip">你还没有学会武学。</div>';
+      right.innerHTML = skillPreviewHtml(null);
       content.appendChild(left);
       content.appendChild(right);
       return content;
@@ -420,83 +429,81 @@
 
     left.innerHTML = '<div class="list-stack"></div>';
     var stack = left.querySelector('.list-stack');
-    skills.forEach(function (skill, index) {
+    learned.forEach(function (skill, index) {
       var row = document.createElement('button');
-      row.className = 'list-entry skill-entry' + (index === 0 ? ' is-active' : '');
+      row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
       row.setAttribute('data-preview-id', skill.id);
-      row.innerHTML = [
-        '<span class="entry-main">' + skill.name + '</span>',
-        '<span class="entry-meta">' + skillTypeLabel(skill.type) + '</span>',
-        '<span class="entry-count">耗 ' + (skill.mpCost || 0) + '</span>'
-      ].join('');
+      row.innerHTML = '<span class="entry-main">' + skill.name + '</span><span class="entry-meta">' + (skill.type === 'support' ? '心法' : '招式') + '</span><span class="entry-count">MP ' + (skill.mpCost || 0) + '</span>';
       row.addEventListener('click', function () {
-        right.innerHTML = previewSkillHtml(skill);
+        right.innerHTML = skillPreviewHtml(skill);
       });
       stack.appendChild(row);
     });
 
-    right.innerHTML = previewSkillHtml(skills[0]);
-    bindHoverEntries(stack, right, function (skillId) {
-      return previewSkillHtml(getSkill(skillId));
+    right.innerHTML = skillPreviewHtml(learned[0]);
+    bindHoverEntries(stack, right, function (id) {
+      return skillPreviewHtml(getSkill(id));
+    }, function (id) {
+      var skill = getSkill(id);
+      return skill ? '<div class="tooltip-name">' + skill.name + '</div><div class="tooltip-type">' + (skill.type === 'support' ? '心法' : '招式') + '</div><div class="tooltip-desc">' + (skill.desc || '') + '</div>' : '';
     });
 
     content.appendChild(left);
     content.appendChild(right);
     return content;
-  }
-
-  function attachMapActions(previewRoot, node, currentNodeId) {
-    var actionRow = document.createElement('div');
-    actionRow.className = 'preview-actions';
-    var goBtn = document.createElement('button');
-    goBtn.className = 'btn primary';
-    goBtn.textContent = node.id === currentNodeId ? '当前位置' : '前往此地';
-    goBtn.disabled = node.id === currentNodeId;
-    goBtn.addEventListener('click', function () {
-      if (G.Managers.WorldManager.travelTo(node.id)) {
-        G.Managers.SaveManager.save({ silent: true });
-        G.UI.HUD.showToast('已前往：' + node.name, 'success');
-        refreshHub('map');
-      }
-    });
-    actionRow.appendChild(goBtn);
-    previewRoot.appendChild(actionRow);
   }
 
   function buildMapWindow() {
-    var currentNode = G.Managers.WorldManager.getCurrentNode();
-    var nodes = [currentNode].concat(G.Managers.WorldManager.getAvailableDestinations()).filter(Boolean);
+    var player = getPlayer();
+    var nodes = (G.Data.maps && G.Data.maps.nodes) || [];
+    var currentNodeId = player.currentNodeId;
     var content = document.createElement('div');
     content.className = 'window-layout';
     var left = document.createElement('div');
     left.className = 'window-list';
     var right = document.createElement('aside');
     right.className = 'window-preview';
-
     left.innerHTML = '<div class="list-stack"></div>';
     var stack = left.querySelector('.list-stack');
+
     nodes.forEach(function (node, index) {
+      var unlocked = (player.visitedNodes || []).indexOf(node.id) >= 0 || node.id === currentNodeId || (G.Managers.WorldManager.getCurrentNode().links || []).indexOf(node.id) >= 0;
       var row = document.createElement('button');
-      row.className = 'list-entry map-entry' + (index === 0 ? ' is-active' : '');
+      row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
       row.setAttribute('data-preview-id', node.id);
-      row.innerHTML = [
-        '<span class="entry-main">' + node.name + '</span>',
-        '<span class="entry-meta">' + G.Worlds.WuxiaRules.getNodeThemeLabel(node) + '</span>',
-        '<span class="entry-count">危 ' + node.danger + '</span>'
-      ].join('');
+      row.disabled = !unlocked;
+      row.innerHTML = '<span class="entry-main">' + node.name + '</span><span class="entry-meta">' + G.Worlds.WuxiaRules.getNodeThemeLabel(node) + '</span><span class="entry-count">危 ' + node.danger + '</span>';
       row.addEventListener('click', function () {
-        right.innerHTML = previewNodeHtml(node, currentNode.id);
-        attachMapActions(right, node, currentNode.id);
+        renderMapPreview(node);
       });
       stack.appendChild(row);
     });
 
-    right.innerHTML = previewNodeHtml(nodes[0], currentNode.id);
-    attachMapActions(right, nodes[0], currentNode.id);
-    bindHoverEntries(stack, right, function (nodeId) {
-      var node = G.Managers.WorldManager.getNodeById(nodeId);
-      setTimeout(function () { attachMapActions(right, node, currentNode.id); }, 0);
-      return previewNodeHtml(node, currentNode.id);
+    function renderMapPreview(node) {
+      var isCurrent = node.id === currentNodeId;
+      right.innerHTML = mapPreviewHtml(node, isCurrent);
+      if (!isCurrent) {
+        var goBtn = document.createElement('button');
+        goBtn.className = 'btn primary';
+        goBtn.textContent = '前往此地';
+        goBtn.addEventListener('click', function () {
+          G.Managers.WorldManager.travelTo(node.id);
+          G.Managers.SaveManager.save({ silent: true });
+          G.UI.HUD.showToast('已前往：' + node.name, 'success');
+          G.UI.GameWindows.close();
+          refreshHub();
+        });
+        right.appendChild(goBtn);
+      }
+    }
+
+    renderMapPreview(nodes.find(function (node) { return node.id === currentNodeId; }) || nodes[0]);
+    bindHoverEntries(stack, right, function (id) {
+      var node = nodes.find(function (entry) { return entry.id === id; });
+      return mapPreviewHtml(node, id === currentNodeId);
+    }, function (id) {
+      var node = nodes.find(function (entry) { return entry.id === id; });
+      return node ? '<div class="tooltip-name">' + node.name + '</div><div class="tooltip-type">危险 ' + node.danger + '</div><div class="tooltip-desc">' + node.desc + '</div>' : '';
     });
 
     content.appendChild(left);
@@ -504,82 +511,65 @@
     return content;
   }
 
-  function renderCharacterPreview(previewRoot, slot, item) {
-    previewRoot.innerHTML = item ? previewItemHtml(item) : [
-      '<div class="window-kicker">' + slotLabel(slot) + '</div>',
-      '<h3>未装备</h3>',
-      '<div class="empty-tip">该栏位当前没有装备。你可以从背包中穿戴新的 ' + slotLabel(slot) + '。</div>'
-    ].join('');
-    if (item) {
-      var row = document.createElement('div');
-      row.className = 'preview-actions';
-      var unequipBtn = document.createElement('button');
-      unequipBtn.className = 'btn';
-      unequipBtn.textContent = '卸下';
-      unequipBtn.addEventListener('click', function () {
-        if (G.Managers.PlayerManager.unequipSlot(slot)) {
-          G.Managers.SaveManager.save({ silent: true });
-          G.UI.HUD.showToast('已卸下：' + item.name, 'success');
-          refreshHub('character');
-        }
-      });
-      row.appendChild(unequipBtn);
-      previewRoot.appendChild(row);
-    }
-  }
-
-  function buildCharacterWindow() {
+  function buildProfileWindow() {
     var player = getPlayer();
     var equipment = G.Managers.PlayerManager.getEquipmentDetail();
+    var breakdown = G.Managers.PlayerManager.getAttributeBreakdown();
     var content = document.createElement('div');
     content.className = 'window-layout';
     var left = document.createElement('div');
-    left.className = 'window-list';
+    left.className = 'profile-card';
     var right = document.createElement('aside');
     right.className = 'window-preview';
 
     left.innerHTML = [
-      '<div class="profile-card">',
-        '<div class="window-kicker">个人信息</div>',
-        '<h3>' + player.name + '</h3>',
-        '<div class="tag-list">',
-          '<span class="tag">Lv.' + player.level + '</span>',
-          '<span class="tag">' + player.backgroundLabel + '</span>',
-          '<span class="tag">' + player.talentLabel + '</span>',
-          '<span class="tag tag-gold">' + player.factionName + '</span>',
-        '</div>',
-        '<div class="kv-grid compact-grid">',
-          '<div class="kv-item"><strong>攻击</strong><div class="muted">' + player.attackPower + '</div></div>',
-          '<div class="kv-item"><strong>防御</strong><div class="muted">' + player.defensePower + '</div></div>',
-          '<div class="kv-item"><strong>身法</strong><div class="muted">' + player.speedPower + '</div></div>',
-          '<div class="kv-item"><strong>声望</strong><div class="muted">' + player.reputation + '</div></div>',
-        '</div>',
-        '<div class="panel-header slim"><h3>装备栏</h3><span class="muted">鼠标悬停查看预览</span></div>',
-        '<div class="slot-stack" id="character-slot-stack"></div>',
-      '</div>'
+      '<div class="window-kicker">角色信息</div>',
+      '<h3>' + player.name + ' · Lv.' + player.level + '</h3>',
+      '<div class="tag-list"><span class="tag">' + player.backgroundLabel + '</span><span class="tag">' + player.talentLabel + '</span><span class="tag">' + player.factionName + '</span></div>',
+      '<div class="preview-section"><div class="preview-title">装备栏</div><div class="slot-stack" id="profile-slot-stack"></div></div>',
+      '<div class="preview-section"><div class="preview-title">基础属性</div>' + previewStatsHtml({ maxHp: breakdown.base.maxHp, maxMp: breakdown.base.maxMp, strength: breakdown.base.strength, agility: breakdown.base.agility, constitution: breakdown.base.constitution, insight: breakdown.base.insight }, null) + '</div>',
+      '<div class="preview-section"><div class="preview-title">最终战斗属性</div>' + previewStatsHtml({ attack: breakdown.final.attack, defense: breakdown.final.defense, speed: breakdown.final.speed, crit: breakdown.final.crit }, null) + '</div>'
     ].join('');
 
-    var slotStack = left.querySelector('#character-slot-stack');
+    var stack = left.querySelector('#profile-slot-stack');
     ['weapon', 'armor', 'accessory'].forEach(function (slot, index) {
-      var item = equipment[slot] || null;
+      var entry = equipment[slot];
       var row = document.createElement('button');
-      row.className = 'list-entry slot-entry' + (index === 0 ? ' is-active' : '');
+      row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
       row.setAttribute('data-preview-id', slot);
-      row.innerHTML = [
-        '<span class="entry-main">' + slotLabel(slot) + '</span>',
-        '<span class="entry-meta">' + (item ? item.name : '未装备') + '</span>',
-        '<span class="entry-count">' + (item ? '已穿戴' : '--') + '</span>'
-      ].join('');
+      row.innerHTML = '<span class="entry-main">' + slotLabel(slot) + '</span><span class="entry-meta">' + (entry ? entry.name : '未装备') + '</span><span class="entry-count">' + (entry ? '已穿戴' : '--') + '</span>';
       row.addEventListener('click', function () {
-        renderCharacterPreview(right, slot, item);
+        renderProfilePreview(slot, entry);
       });
-      slotStack.appendChild(row);
+      stack.appendChild(row);
     });
 
-    renderCharacterPreview(right, 'weapon', equipment.weapon || null);
-    bindHoverEntries(slotStack, right, function (slot) {
-      renderCharacterPreview(right, slot, equipment[slot] || null);
-      return null;
+    function renderProfilePreview(slot, entry) {
+      if (!entry) {
+        right.innerHTML = '<div class="window-kicker">装备预览</div><h3>' + slotLabel(slot) + '</h3><div class="empty-tip">当前槽位未装备物品。</div>';
+        return;
+      }
+      right.innerHTML = itemPreviewHtml({ item: entry, count: 1, equipped: true, instanceId: entry.instanceId, itemId: entry.itemId });
+      var unequipBtn = document.createElement('button');
+      unequipBtn.className = 'btn primary';
+      unequipBtn.textContent = '卸下装备';
+      unequipBtn.addEventListener('click', function () {
+        if (G.Managers.PlayerManager.unequipSlot(slot)) {
+          G.Managers.SaveManager.save({ silent: true });
+          G.UI.HUD.showToast('已卸下：' + entry.name, 'success');
+          refreshHub('profile');
+        }
+      });
+      right.appendChild(unequipBtn);
+    }
+
+    renderProfilePreview('weapon', equipment.weapon || null);
+    bindHoverEntries(stack, right, function (slot) {
+      var item = equipment[slot] || null;
+      return item ? itemPreviewHtml({ item: item, count: 1, equipped: true, instanceId: item.instanceId, itemId: item.itemId }) : '<div class="window-kicker">装备预览</div><h3>' + slotLabel(slot) + '</h3><div class="empty-tip">当前槽位未装备物品。</div>';
+    }, function (slot) {
+      var item = equipment[slot] || null;
+      return item ? itemTooltipHtml({ item: item, count: 1 }) : '<div class="tooltip-name">' + slotLabel(slot) + '</div><div class="tooltip-desc">当前槽位未装备物品。</div>';
     });
 
     content.appendChild(left);
@@ -587,50 +577,178 @@
     return content;
   }
 
+  function buildAnnouncementWindow() {
+    var announcements = G.Managers.AnnouncementManager.getAll().map(function (entry) {
+      return Object.assign({ current: entry.version === G.version }, entry);
+    });
+    var content = document.createElement('div');
+    content.className = 'window-layout';
+    var left = document.createElement('div');
+    left.className = 'window-list';
+    var right = document.createElement('aside');
+    right.className = 'window-preview';
+
+    left.innerHTML = '<div class="list-stack"></div>';
+    var stack = left.querySelector('.list-stack');
+    announcements.forEach(function (entry, index) {
+      var row = document.createElement('button');
+      row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
+      row.setAttribute('data-preview-id', entry.version);
+      row.innerHTML = '<span class="entry-main">' + entry.version + ' · ' + entry.title + '</span><span class="entry-meta">' + entry.date + '</span><span class="entry-count">' + (entry.current ? '当前' : '历史') + '</span>';
+      row.addEventListener('click', function () {
+        right.innerHTML = announcementPreviewHtml(entry);
+      });
+      stack.appendChild(row);
+    });
+
+    if (announcements.length) {
+      right.innerHTML = announcementPreviewHtml(announcements[0]);
+    } else {
+      right.innerHTML = announcementPreviewHtml(null);
+    }
+    bindHoverEntries(stack, right, function (version) {
+      var entry = announcements.find(function (row) { return row.version === version; });
+      return announcementPreviewHtml(entry);
+    }, function (version) {
+      var entry = announcements.find(function (row) { return row.version === version; });
+      return entry ? '<div class="tooltip-name">版本 ' + entry.version + '</div><div class="tooltip-type">' + entry.date + '</div><div class="tooltip-desc">' + (entry.summary || '') + '</div>' : '';
+    });
+
+    G.Managers.AnnouncementManager.markCurrentSeen();
+    content.appendChild(left);
+    content.appendChild(right);
+    return content;
+  }
+
+  function buildAdminWindow() {
+    var content = document.createElement('div');
+    content.className = 'window-layout';
+    var left = document.createElement('div');
+    left.className = 'profile-card';
+    var right = document.createElement('aside');
+    right.className = 'window-preview';
+    var player = getPlayer();
+
+    left.innerHTML = [
+      '<div class="window-kicker">后台 / 管理</div>',
+      '<h3>游戏内管理面板</h3>',
+      '<p class="preview-desc">用于测试、调试和维护当前本地存档。纯前端版本下，这里就是你的游戏内后台入口。</p>',
+      '<div class="preview-actions admin-actions">',
+        '<button class="btn primary" id="admin-heal">恢复满状态</button>',
+        '<button class="btn" id="admin-money">银两 + 50</button>',
+        '<button class="btn" id="admin-bandage">发放绷带</button>',
+        '<button class="btn" id="admin-export">导出存档</button>',
+        '<button class="btn" id="admin-import">导入存档</button>',
+      '</div>'
+    ].join('');
+
+    function refreshAdminInfo() {
+      var current = getPlayer();
+      right.innerHTML = [
+        '<div class="window-kicker">当前存档</div>',
+        '<h3>' + current.name + ' · Lv.' + current.level + '</h3>',
+        '<div class="tag-list"><span class="tag">银两 ' + current.money + '</span><span class="tag">绷带 ' + G.Managers.PlayerManager.getItemCount('bandage') + '</span><span class="tag">地点 ' + current.currentNodeId + '</span></div>',
+        '<div class="preview-section"><div class="preview-title">管理说明</div><div class="bullet-list"><div>· 导出/导入走本地文件，不依赖服务器。</div><div>· 所有调试变更会写入本地存档。</div><div>· 公告窗口会展示每个版本的更新记录。</div></div></div>'
+      ].join('');
+    }
+
+    left.querySelector('#admin-heal').addEventListener('click', function () {
+      G.Managers.PlayerManager.heal(999, 999);
+      G.Managers.SaveManager.save({ silent: true });
+      G.UI.HUD.showToast('已恢复满状态', 'success');
+      refreshHub('admin');
+    });
+    left.querySelector('#admin-money').addEventListener('click', function () {
+      G.Managers.PlayerManager.gainMoney(50);
+      G.Managers.SaveManager.save({ silent: true });
+      G.UI.HUD.showToast('银两 +50', 'success');
+      refreshHub('admin');
+    });
+    left.querySelector('#admin-bandage').addEventListener('click', function () {
+      G.Managers.PlayerManager.addItem('bandage');
+      G.Managers.SaveManager.save({ silent: true });
+      G.UI.HUD.showToast('发放绷带 x1', 'success');
+      refreshHub('admin');
+    });
+    left.querySelector('#admin-export').addEventListener('click', function () {
+      G.Managers.SaveManager.exportSave();
+    });
+    left.querySelector('#admin-import').addEventListener('click', function () {
+      if (typeof G.State.requestSaveImport === 'function') G.State.requestSaveImport();
+    });
+
+    refreshAdminInfo();
+    content.appendChild(left);
+    content.appendChild(right);
+    return content;
+  }
+
+  function createWindow(key) {
+    if (key === 'profile') return modalShell('个人信息', '角色 / 穿戴 / 属性', buildProfileWindow());
+    if (key === 'inventory') return modalShell('背包', '统一物品存储', buildInventoryWindow());
+    if (key === 'shop') return modalShell('商城', '当前地点商人', buildShopWindow());
+    if (key === 'skills') return modalShell('技能', '已学武学', buildSkillsWindow());
+    if (key === 'map') return modalShell('地图', '节点探索', buildMapWindow());
+    if (key === 'announcement') return modalShell('公告', '版本更新记录', buildAnnouncementWindow());
+    if (key === 'admin') return modalShell('后台', '游戏内管理面板', buildAdminWindow());
+    return null;
+  }
+
   G.UI.GameWindows = {
     open: function (key) {
-      currentWindowKey = key;
       var root = getModalRoot();
       if (!root) return;
+      currentWindowKey = key;
       root.innerHTML = '';
-      var node;
-      if (key === 'character') {
-        node = modalShell('个人信息', '角色面板', buildCharacterWindow());
-      } else if (key === 'inventory') {
-        node = modalShell('背包', '仓库与装备', buildInventoryWindow());
-      } else if (key === 'shop') {
-        node = modalShell('商城', '当前地点补给', buildShopWindow());
-      } else if (key === 'skills') {
-        node = modalShell('技能', '武学预览', buildSkillWindow());
-      } else if (key === 'map') {
-        node = modalShell('地图', '节点移动', buildMapWindow());
-      }
-      if (node) root.appendChild(node);
+      var win = createWindow(key);
+      if (win) root.appendChild(win);
+      hideTooltip();
+      G.State.systemDrawerOpen = false;
     },
     close: function () {
-      currentWindowKey = null;
       var root = getModalRoot();
       if (root) root.innerHTML = '';
-    },
-    getCurrentWindowKey: function () {
-      return currentWindowKey;
+      currentWindowKey = null;
+      hideTooltip();
     },
     buildToolbar: function () {
-      var bar = document.createElement('div');
-      bar.className = 'panel toolbar-panel';
-      bar.innerHTML = [
-        '<button class="toolbar-btn" data-window="character">个人信息</button>',
+      var panel = document.createElement('div');
+      panel.className = 'panel toolbar-panel';
+      panel.innerHTML = [
+        '<button class="toolbar-btn" data-window="profile">个人信息</button>',
         '<button class="toolbar-btn" data-window="inventory">背包</button>',
         '<button class="toolbar-btn" data-window="shop">商城</button>',
         '<button class="toolbar-btn" data-window="skills">技能</button>',
         '<button class="toolbar-btn" data-window="map">地图</button>'
       ].join('');
-      Array.prototype.slice.call(bar.querySelectorAll('[data-window]')).forEach(function (btn) {
+      Array.prototype.slice.call(panel.querySelectorAll('[data-window]')).forEach(function (btn) {
         btn.addEventListener('click', function () {
           G.UI.GameWindows.open(btn.getAttribute('data-window'));
         });
       });
-      return bar;
+      return panel;
+    },
+    buildSystemCorner: function () {
+      var wrap = document.createElement('div');
+      wrap.className = 'system-corner' + (G.State.systemDrawerOpen ? ' is-open' : '');
+      wrap.innerHTML = [
+        '<button class="system-triangle-btn" id="system-triangle-btn" aria-label="系统菜单">△' + (G.Managers.AnnouncementManager.hasUnreadCurrent() ? '<span class="corner-dot"></span>' : '') + '</button>',
+        '<div class="system-drawer">',
+          '<button class="drawer-btn" data-window="announcement">公告</button>',
+          '<button class="drawer-btn" data-window="admin">后台</button>',
+        '</div>'
+      ].join('');
+      wrap.querySelector('#system-triangle-btn').addEventListener('click', function () {
+        G.State.systemDrawerOpen = !G.State.systemDrawerOpen;
+        wrap.classList.toggle('is-open', G.State.systemDrawerOpen);
+      });
+      Array.prototype.slice.call(wrap.querySelectorAll('.drawer-btn')).forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          G.State.systemDrawerOpen = false;
+          G.UI.GameWindows.open(btn.getAttribute('data-window'));
+        });
+      });
+      return wrap;
     }
   };
 })(window.TransmigratorGame);

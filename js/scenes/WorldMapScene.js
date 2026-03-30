@@ -1,7 +1,7 @@
 (function (G) {
   function quickRumor(node) {
     var rumors = {
-      qingshi_town: '青石镇的说书人反复提到“门外来客”。客栈与茶摊都可能藏着新的线索。',
+      qingshi_town: '青石镇的说书人反复提到“门外来客”。客栈、茶摊与旧镖局都可能藏着新的线索。',
       blackwind_hill: '黑风山的风声里混着兵刃摩擦声，盗匪与异物碎片都在盯着闯入者。',
       luochuan_road: '洛川古道上消息最杂，既有正派弟子，也有夜行者与黑市商贩。',
       night_market: '夜市渡口灯影摇晃，越是低声说话的人，越可能知道穿越者的秘密。',
@@ -25,12 +25,14 @@
     var merchantPool = G.Managers.WorldManager.getMerchantPoolForCurrentNode();
     var settlementEvent = G.Managers.WorldManager.getSettlementEventForCurrentNode();
     var equipment = G.Managers.PlayerManager.getEquipmentDetail();
+    var breakdown = G.Managers.PlayerManager.getAttributeBreakdown();
 
     var layer = document.createElement('div');
     layer.className = 'ui-layer hub-screen';
     var topBar = G.UI.HUD.buildTopBar();
     topBar.id = 'hub-top-bar';
     layer.appendChild(topBar);
+    layer.appendChild(G.UI.GameWindows.buildSystemCorner());
 
     var wrap = document.createElement('div');
     wrap.className = 'hub-layout';
@@ -44,8 +46,8 @@
           '<p>' + current.desc + '</p>',
           '<div class="tag-list">',
             '<span class="tag">危险 ' + current.danger + '</span>',
-            '<span class="tag">' + G.Worlds.WuxiaRules.getNodeThemeLabel(current) + '</span>',
             '<span class="tag">可达地点 ' + destinations.length + '</span>',
+            '<span class="tag">已探索 ' + (player.visitedNodes || []).length + '</span>',
           '</div>',
         '</div>',
       '</div>',
@@ -62,7 +64,7 @@
       '</div>'
     ].join('');
 
-    var side = G.UI.Panel({ title: '江湖情报', subtitle: '主线 / 门派 / 状态', className: 'sidebar-panel hub-side-panel' });
+    var side = G.UI.Panel({ title: '江湖情报', subtitle: '任务 / 属性 / 装备', className: 'sidebar-panel hub-side-panel' });
     var rep = player.factionReputation || {};
     side.body.innerHTML = [
       '<div class="quest-card">',
@@ -75,8 +77,8 @@
         '<p>' + quickRumor(current) + '</p>',
       '</div>',
       '<div class="kv-grid compact-grid">',
-        '<div class="kv-item"><strong>银两</strong><div class="muted">' + player.money + '</div></div>',
-        '<div class="kv-item"><strong>门派</strong><div class="muted">' + player.factionName + '</div></div>',
+        '<div class="kv-item"><strong>攻击</strong><div class="muted">' + breakdown.final.attack + '</div></div>',
+        '<div class="kv-item"><strong>防御</strong><div class="muted">' + breakdown.final.defense + '</div></div>',
         '<div class="kv-item"><strong>武器</strong><div class="muted">' + (equipment.weapon ? equipment.weapon.name : '未装备') + '</div></div>',
         '<div class="kv-item"><strong>饰品</strong><div class="muted">' + (equipment.accessory ? equipment.accessory.name : '未装备') + '</div></div>',
       '</div>',

@@ -1,6 +1,6 @@
 # 一念穿越：江湖初卷
 
-![Version](https://img.shields.io/badge/version-1.2.0-8b5cf6)
+![Version](https://img.shields.io/badge/version-1.3.0-8b5cf6)
 ![Engine](https://img.shields.io/badge/engine-Phaser_3-2d7ff9)
 ![Deploy](https://img.shields.io/badge/deploy-GitHub_Pages-111827)
 ![License](https://img.shields.io/badge/license-MIT-16a34a)
@@ -28,8 +28,8 @@
 
 ## 当前版本
 
-- **版本号**：`1.2.0`
-- **主界面特性**：个人信息 / 背包 / 商城 / 技能 / 地图 五大弹窗并排布局
+- **版本号**：`1.3.0`
+- **主界面特性**：个人信息 / 背包 / 商城 / 技能 / 地图 五大弹窗并排布局，右上角新增系统三角菜单（公告 / 后台）
 - **版本页**：[`version.html`](./version.html)
 - **变更记录**：[`CHANGELOG.md`](./CHANGELOG.md)
 - **部署说明**：[`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md)
@@ -73,6 +73,9 @@
 - 城镇与商店交互
 - 本地存档与导入导出
 - 多结局收束
+- 统一道具库 / 装备库
+- 装备实例化存储与属性联动
+- 游戏内公告与后台窗口
 
 ### 工程与仓库
 - GitHub Pages 自动部署工作流
@@ -126,7 +129,9 @@ transmigrator-wuxia/
 │  │        ├─ maps.json
 │  │        ├─ events.json
 │  │        ├─ npcs.json
-│  │        ├─ items.json
+│  │        ├─ itemLibrary.json
+│  │        ├─ equipmentLibrary.json
+│  │        ├─ announcements.json
 │  │        ├─ skills.json
 │  │        └─ enemies.json
 │  ├─ icons/

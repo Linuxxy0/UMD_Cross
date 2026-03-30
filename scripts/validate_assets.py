@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / 'assets' / 'data' / 'worlds' / 'wuxia'
 REQUIRED = [
     'world.json', 'maps.json', 'events.json', 'npcs.json',
-    'items.json', 'skills.json', 'enemies.json'
+    'itemLibrary.json', 'equipmentLibrary.json', 'skills.json', 'enemies.json', 'announcements.json'
 ]
 
 

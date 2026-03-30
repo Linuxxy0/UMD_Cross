@@ -11,14 +11,15 @@
       var top = document.createElement('div');
       top.className = 'panel top-hud';
       top.innerHTML = [
-        '<div>',
-          '<strong>' + (player ? player.name : '未创建角色') + '</strong>',
-          '<div class="muted">' + (node ? ('当前位置：' + node.name + ' · ' + G.Worlds.WuxiaRules.getNodeThemeLabel(node)) : '未进入世界') + '</div>',
+        '<div class="hud-primary">',
+          '<strong>' + (player ? player.name : '未创建角色') + ' <span class="gold">Lv.' + (player ? player.level : 0) + '</span></strong>',
+          '<div class="muted">当前世界：大晟江湖 · ' + (node ? node.name : '未进入江湖') + '</div>',
         '</div>',
         '<div class="stats">',
           '<div class="stat-pill">气血 ' + (player ? player.hp : 0) + '/' + (player ? (player.maxHpTotal || player.maxHp) : 0) + '</div>',
           '<div class="stat-pill">内力 ' + (player ? player.mp : 0) + '/' + (player ? (player.maxMpTotal || player.maxMp) : 0) + '</div>',
           '<div class="stat-pill">银两 ' + (player ? player.money : 0) + '</div>',
+          '<div class="stat-pill">攻击 ' + (player ? player.attackPower : 0) + '</div>',
           '<div class="stat-pill">门派 ' + (player ? player.factionName : '无') + '</div>',
         '</div>'
       ].join('');

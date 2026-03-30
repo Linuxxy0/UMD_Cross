@@ -11,8 +11,8 @@
     if (!cond) return true;
     if (cond.type === 'reputation_gte') return player.reputation >= cond.value;
     if (cond.type === 'money_gte') return player.money >= cond.value;
-    if (cond.type === 'has_item') return player.inventory.indexOf(cond.value) >= 0;
-    if (cond.type === 'not_has_item') return player.inventory.indexOf(cond.value) < 0;
+    if (cond.type === 'has_item') return G.Managers.PlayerManager.hasItem(cond.value);
+    if (cond.type === 'not_has_item') return !G.Managers.PlayerManager.hasItem(cond.value);
     if (cond.type === 'flag') return !!player.flags[cond.value];
     if (cond.type === 'not_flag') return !player.flags[cond.value];
     if (cond.type === 'level_gte') return player.level >= cond.value;

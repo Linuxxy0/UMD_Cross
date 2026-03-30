@@ -65,7 +65,7 @@
         '<div class="kv-item"><strong>防御</strong><div class="muted">' + enemy.defense + '</div></div>',
         '<div class="kv-item"><strong>奖励</strong><div class="muted">银两 ' + enemy.rewards.money + ' / 经验 ' + enemy.rewards.exp + '</div></div>',
       '</div>',
-      '<div class="feature-card compact"><div class="feature-kicker">恢复道具</div><p>绷带 x ' + ((player.inventory || []).filter(function (id) { return id === 'bandage'; }).length) + ' · 回气散 x ' + ((player.inventory || []).filter(function (id) { return id === 'herbal_pill'; }).length) + '</p></div>'
+      '<div class="feature-card compact"><div class="feature-kicker">恢复道具</div><p>绷带 x ' + G.Managers.PlayerManager.getItemCount('bandage') + ' · 回气散 x ' + G.Managers.PlayerManager.getItemCount('herbal_pill') + '</p></div>'
     ].join('');
 
     wrap.appendChild(left);

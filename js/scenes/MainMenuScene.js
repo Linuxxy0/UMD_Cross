@@ -111,7 +111,7 @@
       this.add.triangle(560, 560, 320, 760, 560, 250, 800, 760, 0x112339, 1);
       this.add.triangle(930, 590, 700, 760, 930, 300, 1160, 760, 0x10263a, 1);
       this.add.text(78, 88, '一念穿越', { fontSize: '66px', color: '#f7efd9', fontStyle: 'bold' });
-      this.add.text(84, 160, '第一世界：武侠 · 主界面版 · UMD 页游', { fontSize: '22px', color: '#f5d17e' });
+      this.add.text(84, 160, '第一世界：武侠 · 统一物品库 / 系统三角菜单', { fontSize: '22px', color: '#f5d17e' });
       renderMenu();
     }
   });

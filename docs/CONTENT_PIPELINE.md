@@ -12,7 +12,7 @@
 - `next`
 
 ## 物品
-统一在 `items.json` 中维护，装备必须明确：
+消耗品 / 材料 / 任务物品统一在 `itemLibrary.json` 中维护，装备统一在 `equipmentLibrary.json` 中维护，装备必须明确：
 - `slot`
 - `rarity`
 - `stats`

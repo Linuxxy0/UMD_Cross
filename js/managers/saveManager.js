@@ -34,7 +34,7 @@
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
       a.href = url;
-      a.download = 'transmigrator-save.json';
+      a.download = 'transmigrator-wuxia-save-' + G.version + '.json';
       a.click();
       setTimeout(function () { URL.revokeObjectURL(url); }, 500);
     },

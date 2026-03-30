@@ -181,3 +181,50 @@ body {
   display: inline-flex;
   align-items: center;
 }
+
+.header-note {
+  color: var(--gold);
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 209, 126, 0.18);
+  background: rgba(255,255,255,0.04);
+}
+
+.floating-tooltip {
+  position: fixed;
+  z-index: 12000;
+  width: min(300px, calc(100vw - 32px));
+  pointer-events: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(245, 209, 126, 0.25);
+  background: linear-gradient(180deg, rgba(22,20,17,0.98), rgba(8,8,10,0.98));
+  box-shadow: 0 16px 40px rgba(0,0,0,0.48);
+}
+
+.floating-tooltip.hidden { display: none; }
+
+.tooltip-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.tooltip-type {
+  color: var(--gold);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.tooltip-stats {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.tooltip-desc {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 13px;
+}

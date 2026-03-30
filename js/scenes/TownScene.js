@@ -18,7 +18,7 @@
       card.innerHTML = [
         '<h4>' + item.name + ' x' + entry.count + '</h4>',
         '<p class="muted">' + item.desc + '</p>',
-        '<div class="tag-list"><span class="tag">' + item.type + '</span>' + (item.slot ? '<span class="tag">' + item.slot + '</span>' : '') + '</div>'
+        '<div class="tag-list"><span class="tag">' + item.type + '</span>' + ((item.equipSlot || item.slot) ? '<span class="tag">' + (item.equipSlot || item.slot) + '</span>' : '') + '</div>'
       ].join('');
       if (item.type === 'equipment') {
         var equipBtn = document.createElement('button');
@@ -51,7 +51,7 @@
       card.innerHTML = [
         '<h4>' + item.name + '</h4>',
         '<p class="muted">' + item.desc + '</p>',
-        '<div class="tag-list"><span class="tag">' + item.type + '</span><span class="tag">' + item.price + ' 银两</span></div>'
+        '<div class="tag-list"><span class="tag">' + item.type + '</span><span class="tag">' + (item.buyPrice || item.price || 0) + ' 银两</span></div>'
       ].join('');
       var buyBtn = document.createElement('button');
       buyBtn.className = 'btn';

@@ -1,0 +1,62 @@
+{
+  "items": [
+    {
+      "id": "bandage",
+      "name": "绷带",
+      "type": "consumable",
+      "subType": "medicine",
+      "quality": "common",
+      "stackable": true,
+      "maxStack": 99,
+      "buyPrice": 8,
+      "sellPrice": 4,
+      "desc": "简易包扎物，战斗中可恢复少量气血。",
+      "useEffects": [
+        { "type": "recover", "target": "hp", "value": 35 }
+      ]
+    },
+    {
+      "id": "herbal_pill",
+      "name": "回气散",
+      "type": "consumable",
+      "subType": "medicine",
+      "quality": "uncommon",
+      "stackable": true,
+      "maxStack": 99,
+      "buyPrice": 14,
+      "sellPrice": 7,
+      "desc": "草药研磨而成，适合在休整时恢复气血与内力。",
+      "useEffects": [
+        { "type": "recover", "target": "hp", "value": 24 },
+        { "type": "recover", "target": "mp", "value": 18 }
+      ]
+    },
+    {
+      "id": "smoke_pellet",
+      "name": "烟雾丸",
+      "type": "consumable",
+      "subType": "utility",
+      "quality": "uncommon",
+      "stackable": true,
+      "maxStack": 99,
+      "buyPrice": 18,
+      "sellPrice": 9,
+      "desc": "玄衣楼常见小物，可掩护撤退并稍微调整内息。",
+      "useEffects": [
+        { "type": "recover", "target": "mp", "value": 8 }
+      ]
+    },
+    {
+      "id": "copper_token",
+      "name": "异纹铜片",
+      "type": "quest",
+      "subType": "key",
+      "quality": "rare",
+      "stackable": true,
+      "maxStack": 9,
+      "buyPrice": 0,
+      "sellPrice": 0,
+      "desc": "刻有不属于此世纹路的铜片，似乎与界门有关。"
+    }
+  ]
+}

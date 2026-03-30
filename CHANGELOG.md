@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.0] - 2026-03-30
+
+### Added
+- 新增统一道具库 `itemLibrary.json` 与装备库 `equipmentLibrary.json`。
+- 新增版本公告数据 `announcements.json`，游戏内公告窗口按版本展示更新记录。
+- 新增右上角系统侧拉三角，支持打开公告与后台窗口。
+- 新增浮动装备 / 商品悬停提示面板。
+
+### Changed
+- 背包存储改为堆叠条目 + 装备实例化记录。
+- 人物属性改为基础属性、装备加成、最终属性三层计算。
+- 穿戴与卸下装备时自动重算人物属性并同步 UI。
+- 存档键升级为 `transmigrator_wuxia_save_v130`。
+
 All notable changes to this project will be documented in this file.
 
 ## [1.2.0] - 2026-03-30
