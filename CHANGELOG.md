@@ -1,11 +1,26 @@
+## 2.0.0 - 2026-03-31
+
+- Reframed the project around a Steam-inspired indie RPG terminal presentation with calmer contrast, sharper information hierarchy, and a cleaner typography-led UI shell.
+- Refined the shell, drawers, windows, buttons, logs, and status panels so the game feels like an always-running narrative interface instead of a browser showcase page.
+- Restyled inventory, skills, map, and related panes into more restrained two-pane windows with cleaner list states, quality framing, and command-focused interaction.
+- Updated scene copy and framing across menu, character creation, world, event, and battle scenes to match the new minimal terminal tone.
+
+## 1.9.0 - 2026-03-31
+
+- 重构默认进入流程：加载完成后不再先到首页或展示页，而是直接恢复当前进程，或直接进入创建角色界面。
+- 主游戏界面改为三栏 MUD 终端布局，强调文字叙事、状态面板与上下文，而不是页游式首页门面。
+- 建立新的视觉 token：深色低饱和、细线框、直角、极轻阴影、排版优先。
+- 创建角色、事件、战斗、结局和主场景统一为同一套终端化 UI 语言。
+- 保留左右抽屉和弹窗系统，但整体收束为更克制的窗格与信息面板风格。
+
 # Changelog
 
-## v1.8.0 - 2026-03-31
+## v1.9.0 - 2026-03-31
 - 新增更接近 DNF 的装备格子框体、品质边框与更密实的直角金属线条 UI。
 - 背包与商城加入分页仓库浏览，分类列表不再无限拉长。
 - 个人信息窗口与背包条目接入拖拽换装，可直接把装备拖到武器 / 护甲 / 饰品槽位。
 - 新增 4 格技能快捷栏，技能窗口支持拖拽分配，主界面同步显示当前快捷技能。
-- 存档键升级为 `transmigrator_wuxia_save_v180`。
+- 存档键升级为 `transmigrator_wuxia_save_v190`。
 
 ## v1.7.0 - 2026-03-31
 - 强化整项目为更硬朗的直角 UMD 线条界面，统一窗口、按钮、标签、提示框和侧栏的金属边框风格。

@@ -1,15 +1,15 @@
 {
   "projectName": "一念穿越：江湖初卷",
   "repositoryName": "transmigrator-wuxia",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "releaseChannel": "public",
   "world": "wuxia",
-  "storageKey": "transmigrator_wuxia_save_v180",
+  "storageKey": "transmigrator_wuxia_save_v200",
   "releaseDate": "2026-03-31",
   "notes": [
-    "Added DNF-style framed equipment cells, item quality borders and a denser straight-line metal window treatment across the whole UI.",
-    "Inventory and shop windows now support paged storage browsing, making larger collections easier to scan without one long list.",
-    "Profile and inventory now support drag-and-drop equipment changes, so weapon / armor / accessory can be swapped more like a traditional page game client.",
-    "Added a skill quickbar system with four slots, including drag assignment inside the skill window and a persistent quickbar display on the main game screen."
+    "Refined the entire UI around a Steam-inspired indie RPG terminal language with restrained straight-line panels, quieter contrast, and typography-first hierarchy.",
+    "Reworked the shell, drawers, modal windows, lists, and command bars so the game reads more like an always-running narrative terminal than a traditional browser homepage or loud page game.",
+    "Retuned inventory, skill, map, and status windows toward a cleaner two-pane layout with calmer metallic surfaces, better item emphasis, and less cluttered interaction states.",
+    "Adjusted the wording and scene framing across menu, create-role, event, battle, and world scenes to support a more mature, minimal, text-forward presentation."
   ]
 }

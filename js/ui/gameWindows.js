@@ -500,7 +500,7 @@
     var pageSize = 12;
     left.innerHTML = [
       '<div class="window-toolbar storage-toolbar">',
-        '<div><div class="window-toolbar-title">分页仓库</div><div class="window-toolbar-sub">更接近 DNF 的仓库浏览：分页、品质边框、装备可直接拖拽到人物槽位。</div></div>',
+        '<div><div class="window-toolbar-title">分页仓库</div><div class="window-toolbar-sub">分页整理当前物资、装备与任务物，条目支持预览与拖拽装配。</div></div>',
         '<div class="window-tabs">',
           tabButtonHtml('all', '全部', true, summary.length),
           tabButtonHtml('equipment', '装备', false, summary.filter(function (entry) { return entry.item.type === 'equipment'; }).length),
@@ -1100,10 +1100,10 @@
 
   function createWindow(key) {
     if (key === 'profile') return modalShell('个人信息', '角色 / 穿戴 / 属性', buildProfileWindow());
-    if (key === 'inventory') return modalShell('背包', '统一物品存储', buildInventoryWindow());
-    if (key === 'shop') return modalShell('商城', '当前地点商人', buildShopWindow());
-    if (key === 'skills') return modalShell('技能', '已学武学', buildSkillsWindow());
-    if (key === 'map') return modalShell('地图', '节点探索', buildMapWindow());
+    if (key === 'inventory') return modalShell('背包', '物资 / 装备 / 任务物', buildInventoryWindow());
+    if (key === 'shop') return modalShell('商店', '当前地点货架', buildShopWindow());
+    if (key === 'skills') return modalShell('技能', '已学招式与心法', buildSkillsWindow());
+    if (key === 'map') return modalShell('地图', '路线与节点', buildMapWindow());
     if (key === 'announcement') return modalShell('公告', '版本更新记录', buildAnnouncementWindow());
     if (key === 'admin') return modalShell('后台', '游戏内管理面板', buildAdminWindow());
     return null;
