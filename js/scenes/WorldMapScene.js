@@ -1,4 +1,8 @@
 (function (G) {
+  function sceneQuality(entry) {
+    if (!entry || !entry.quality) return 'quality-common';
+    return 'quality-' + ({ white: 'common', common: 'common', green: 'uncommon', uncommon: 'uncommon', blue: 'rare', rare: 'rare', purple: 'epic', epic: 'epic', orange: 'legendary', legendary: 'legendary' }[entry.quality] || 'common');
+  }
   function quickRumor(node) {
     var rumors = {
       qingshi_town: '青石镇的说书人反复提到“门外来客”。客栈、茶摊与旧镖局都可能藏着新的线索。',
@@ -13,7 +17,24 @@
   }
 
   function equipmentRow(label, entry) {
-    return '<div class="equip-mini-row"><span>' + label + '</span><strong>' + (entry ? entry.name : '未装备') + '</strong></div>';
+    return [
+      '<div class="equipment-mini-slot ' + (entry ? ('filled ' + sceneQuality(entry)) : 'empty quality-common') + '">',
+        '<span class="slot-corner">' + label.charAt(0) + '</span>',
+        '<span class="slot-main">' + label + '</span>',
+        '<strong>' + (entry ? entry.name : '未装备') + '</strong>',
+      '</div>'
+    ].join('');
+  }
+
+  function quickbarSlotHtml(skill, index) {
+    var quality = skill ? (skill.type === 'support' || skill.type === 'inner' ? 'quality-rare' : 'quality-uncommon') : 'quality-common';
+    return [
+      '<button class="quickbar-slot ' + quality + '" data-slot-index="' + index + '">',
+        '<span class="quickbar-index">' + (index + 1) + '</span>',
+        '<span class="quickbar-glyph">' + (skill ? ((skill.type === 'support' || skill.type === 'inner') ? '诀' : '技') : '+') + '</span>',
+        '<span class="quickbar-name">' + (skill ? skill.name : '空槽') + '</span>',
+      '</button>'
+    ].join('');
   }
 
   function renderHub() {
@@ -30,6 +51,7 @@
     var settlementEvent = G.Managers.WorldManager.getSettlementEventForCurrentNode();
     var equipment = G.Managers.PlayerManager.getEquipmentDetail();
     var rep = player.factionReputation || {};
+    var quickbar = G.Managers.PlayerManager.getQuickbar().map(function (id) { return id ? ((G.Data.skills && G.Data.skills.skills) || []).find(function (skill) { return skill.id === id; }) : null; });
 
     var layer = document.createElement('div');
     layer.className = 'ui-layer hub-screen umd-hub-screen';
@@ -121,6 +143,16 @@
     uiRoot.appendChild(layer);
 
     G.State.renderHub = renderHub;
+
+    var quickbarRoot = main.body.querySelector('#hub-skill-quickbar');
+    if (quickbarRoot) {
+      quickbarRoot.innerHTML = quickbar.map(function (skill, index) { return quickbarSlotHtml(skill, index); }).join('');
+      Array.prototype.slice.call(quickbarRoot.querySelectorAll('.quickbar-slot')).forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          G.UI.GameWindows.open('skills');
+        });
+      });
+    }
 
     var routeGrid = main.body.querySelector('#route-grid');
     destinations.forEach(function (node) {

@@ -48,10 +48,16 @@
     },
     getQualityLabel: function (quality) {
       return {
+        white: '普通',
         common: '普通',
+        green: '精良',
         uncommon: '精良',
+        blue: '稀有',
         rare: '稀有',
-        epic: '史诗'
+        purple: '史诗',
+        epic: '史诗',
+        orange: '传说',
+        legendary: '传说'
       }[quality] || '普通';
     }
   };

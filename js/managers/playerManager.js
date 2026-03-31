@@ -56,6 +56,29 @@
     });
   }
 
+  function ensureQuickbar(player) {
+    var learned = player.learnedSkills || [];
+    var used = {};
+    var slots = Array.isArray(player.quickbar) ? player.quickbar.slice(0, 4) : [];
+    while (slots.length < 4) slots.push(null);
+    slots = slots.map(function (skillId) {
+      if (skillId && learned.indexOf(skillId) >= 0 && !used[skillId]) {
+        used[skillId] = true;
+        return skillId;
+      }
+      return null;
+    });
+    learned.forEach(function (skillId) {
+      if (used[skillId]) return;
+      var idx = slots.indexOf(null);
+      if (idx >= 0) {
+        slots[idx] = skillId;
+        used[skillId] = true;
+      }
+    });
+    player.quickbar = slots;
+  }
+
   function nextInstanceId(player) {
     player.nextInstanceSeq = Math.max(player.nextInstanceSeq || 1, 1);
     var id = 'eq_' + String(player.nextInstanceSeq).padStart(4, '0');
@@ -214,6 +237,7 @@
         equipment: { weapon: null, armor: null, accessory: null },
         nextInstanceSeq: 1,
         learnedSkills: ['punch', 'swift_slash'],
+        quickbar: ['punch', 'swift_slash', null, null],
         flags: {},
         relationships: {},
         visitedNodes: ['qingshi_town'],
@@ -256,6 +280,7 @@
         normalizeInventory(player);
         ensureEquipmentSlots(player);
         migrateEquipmentRefs(player);
+        ensureQuickbar(player);
         this.applyDerivedStats();
       }
       return player;
@@ -493,6 +518,25 @@
       p.equipment[slot] = null;
       this.applyDerivedStats();
       return true;
+    },
+    getQuickbar: function () {
+      var p = this.getPlayer();
+      if (!p) return [null, null, null, null];
+      ensureQuickbar(p);
+      return p.quickbar.slice(0, 4);
+    },
+    setQuickbarSkill: function (slotIndex, skillId) {
+      var p = this.getPlayer();
+      if (!p) return false;
+      ensureQuickbar(p);
+      if (slotIndex < 0 || slotIndex > 3) return false;
+      if (skillId && (p.learnedSkills || []).indexOf(skillId) < 0) return false;
+      p.quickbar[slotIndex] = skillId || null;
+      ensureQuickbar(p);
+      return true;
+    },
+    clearQuickbarSlot: function (slotIndex) {
+      return this.setQuickbarSkill(slotIndex, null);
     },
     buyItem: function (itemId) {
       var item = getItem(itemId);

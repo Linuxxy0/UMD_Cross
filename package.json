@@ -1,6 +1,6 @@
 {
   "name": "transmigrator-wuxia",
-  "version": "1.6.0",
+  "version": "1.8.0",
   "private": true,
   "description": "可直接推送到 GitHub 新仓库并通过 GitHub Pages 发布的武侠穿越 HTML5 页游项目",
   "type": "commonjs",

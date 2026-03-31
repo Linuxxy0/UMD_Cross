@@ -1,6 +1,6 @@
 window.TransmigratorGame = window.TransmigratorGame || {};
 (function (G) {
-  G.version = '1.6.0';
+  G.version = '1.8.0';
   G.Core = G.Core || {};
   G.Managers = G.Managers || {};
   G.Scenes = G.Scenes || {};
@@ -11,7 +11,8 @@ window.TransmigratorGame = window.TransmigratorGame || {};
     currentScene: null,
     leftDrawerOpen: false,
     rightDrawerOpen: false,
-    systemDrawerOpen: false
+    systemDrawerOpen: false,
+    dragPayload: null
   };
   G.Data = G.Data || {};
 })(window.TransmigratorGame);

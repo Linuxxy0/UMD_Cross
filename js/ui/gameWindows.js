@@ -17,8 +17,23 @@
     return document.getElementById('hub-modal-root');
   }
 
+  function normalizeQuality(quality) {
+    return {
+      white: 'common',
+      common: 'common',
+      green: 'uncommon',
+      uncommon: 'uncommon',
+      blue: 'rare',
+      rare: 'rare',
+      purple: 'epic',
+      epic: 'epic',
+      orange: 'legendary',
+      legendary: 'legendary'
+    }[quality] || 'common';
+  }
+
   function qualityClass(item) {
-    return 'quality-' + ((item && item.quality) || 'common');
+    return 'quality-' + normalizeQuality((item && item.quality) || 'common');
   }
 
   function slotLabel(slot) {
@@ -40,6 +55,56 @@
       speed: '速度',
       crit: '暴击'
     }[key] || key;
+  }
+
+  function itemGroupLabel(item) {
+    if (!item) return '未知';
+    if (item.type === 'equipment') return slotLabel(item.equipSlot || item.slot || item.subType);
+    return {
+      consumable: '消耗',
+      material: '材料',
+      quest: '任务'
+    }[item.type] || '物品';
+  }
+
+  function itemGlyph(item) {
+    if (!item) return '物';
+    if (item.type === 'equipment') {
+      return {
+        weapon: '武',
+        armor: '甲',
+        accessory: '饰'
+      }[item.equipSlot || item.slot || item.subType] || '装';
+    }
+    return {
+      consumable: '药',
+      material: '材',
+      quest: '任'
+    }[item.type] || '物';
+  }
+
+  function skillTypeLabel(skill) {
+    if (!skill) return '武学';
+    return skill.type === 'support' || skill.type === 'inner' ? '心法' : '招式';
+  }
+
+  function skillGlyph(skill) {
+    return skillTypeLabel(skill) === '心法' ? '诀' : '技';
+  }
+
+  function tabButtonHtml(key, label, active, count) {
+    return '<button class="window-tab' + (active ? ' is-active' : '') + '" data-tab="' + key + '">' + label + (typeof count === 'number' ? '<span>' + count + '</span>' : '') + '</button>';
+  }
+
+  function entryHtml(icon, main, meta, count, extraClass) {
+    return [
+      '<span class="entry-frame ' + (extraClass || '') + '"><span class="entry-icon">' + icon + '</span></span>',
+      '<span class="entry-lines">',
+        '<span class="entry-main">' + main + '</span>',
+        '<span class="entry-meta">' + meta + '</span>',
+      '</span>',
+      '<span class="entry-count">' + count + '</span>'
+    ].join('');
   }
 
   function getTooltip() {
@@ -147,9 +212,9 @@
     return [
       '<div class="window-kicker">武学信息</div>',
       '<h3>' + skill.name + '</h3>',
-      '<div class="tag-list"><span class="tag">' + (skill.type === 'support' ? '心法' : '招式') + '</span><span class="tag">内力消耗 ' + (skill.mpCost || 0) + '</span><span class="tag">倍率 ' + (skill.power || 1) + '</span></div>',
+      '<div class="tag-list"><span class="tag">' + skillTypeLabel(skill) + '</span><span class="tag">内力消耗 ' + (skill.mpCost || 0) + '</span><span class="tag">倍率 ' + (skill.power || 1) + '</span></div>',
       '<p class="preview-desc">' + (skill.desc || '暂无说明') + '</p>',
-      '<div class="preview-section"><div class="preview-title">战斗定位</div><div class="muted">' + (skill.type === 'support' ? '用于恢复、稳息或自我强化。' : '用于快速压制敌人、形成连击突破口。') + '</div></div>'
+      '<div class="preview-section"><div class="preview-title">战斗定位</div><div class="muted">' + (skillTypeLabel(skill) === '心法' ? '用于恢复、稳息或构筑持续作战节奏。' : '用于爆发、压制与连续进攻。') + '</div></div>'
     ].join('');
   }
 
@@ -184,7 +249,7 @@
     mask.className = 'dnf-modal-mask';
 
     var win = document.createElement('section');
-    win.className = 'dnf-window';
+    win.className = 'dnf-window dnf-window-hardline';
 
     var header = document.createElement('header');
     header.className = 'dnf-window-header';
@@ -287,6 +352,130 @@
     previewRoot.appendChild(actionRow);
   }
 
+  function getPageMeta(list, pageIndex, pageSize) {
+    var totalPages = Math.max(1, Math.ceil((list.length || 0) / pageSize));
+    var clamped = Math.max(0, Math.min(pageIndex, totalPages - 1));
+    return {
+      pageIndex: clamped,
+      totalPages: totalPages,
+      items: list.slice(clamped * pageSize, clamped * pageSize + pageSize)
+    };
+  }
+
+  function renderPager(root, meta, onChange) {
+    if (!root) return;
+    root.innerHTML = [
+      '<button class="window-page-btn" data-act="prev" ' + (meta.pageIndex <= 0 ? 'disabled' : '') + '>◀ 上一页</button>',
+      '<span class="window-page-readout">第 ' + (meta.pageIndex + 1) + ' / ' + meta.totalPages + ' 页</span>',
+      '<button class="window-page-btn" data-act="next" ' + (meta.pageIndex >= meta.totalPages - 1 ? 'disabled' : '') + '>下一页 ▶</button>'
+    ].join('');
+    Array.prototype.slice.call(root.querySelectorAll('.window-page-btn')).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var delta = btn.getAttribute('data-act') === 'next' ? 1 : -1;
+        onChange(delta);
+      });
+    });
+  }
+
+  function setDragPayload(payload) {
+    G.State.dragPayload = payload || null;
+  }
+
+  function getDragPayload() {
+    return G.State.dragPayload || null;
+  }
+
+  function clearDragPayload() {
+    G.State.dragPayload = null;
+  }
+
+  function makeDraggable(node, payload) {
+    if (!node) return;
+    node.setAttribute('draggable', 'true');
+    node.addEventListener('dragstart', function (event) {
+      setDragPayload(payload);
+      node.classList.add('is-dragging');
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', payload.type || payload.kind || 'drag');
+      }
+    });
+    node.addEventListener('dragend', function () {
+      clearDragPayload();
+      node.classList.remove('is-dragging');
+      Array.prototype.slice.call(document.querySelectorAll('.is-drop-target')).forEach(function (target) {
+        target.classList.remove('is-drop-target');
+      });
+    });
+  }
+
+  function makeDroppable(node, handler) {
+    if (!node) return;
+    node.addEventListener('dragenter', function (event) {
+      event.preventDefault();
+      node.classList.add('is-drop-target');
+    });
+    node.addEventListener('dragover', function (event) {
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+      node.classList.add('is-drop-target');
+    });
+    node.addEventListener('dragleave', function () {
+      node.classList.remove('is-drop-target');
+    });
+    node.addEventListener('drop', function (event) {
+      event.preventDefault();
+      node.classList.remove('is-drop-target');
+      var payload = getDragPayload();
+      clearDragPayload();
+      if (payload) handler(payload);
+    });
+  }
+
+  function quickbarSlotLabel(skill) {
+    return skill ? (skillTypeLabel(skill) === '心法' ? '诀' : '技') : '+';
+  }
+
+  function renderQuickbarBlock(root, options) {
+    if (!root) return;
+    var quickbar = G.Managers.PlayerManager.getQuickbar();
+    root.innerHTML = quickbar.map(function (skillId, index) {
+      var skill = skillId ? getSkill(skillId) : null;
+      var qClass = skill ? (skillTypeLabel(skill) === '心法' ? 'quality-rare' : 'quality-uncommon') : 'quality-common';
+      return [
+        '<button class="skill-quick-slot ' + qClass + '" data-quick-slot="' + index + '">',
+          '<span class="quick-slot-index">' + (index + 1) + '</span>',
+          '<span class="quick-slot-glyph">' + quickbarSlotLabel(skill) + '</span>',
+          '<span class="quick-slot-name">' + (skill ? skill.name : '拖拽技能到此') + '</span>',
+        '</button>'
+      ].join('');
+    }).join('');
+    Array.prototype.slice.call(root.querySelectorAll('.skill-quick-slot')).forEach(function (slotNode) {
+      var slotIndex = Number(slotNode.getAttribute('data-quick-slot'));
+      makeDroppable(slotNode, function (payload) {
+        if (payload.type !== 'skill') return;
+        if (G.Managers.PlayerManager.setQuickbarSkill(slotIndex, payload.skillId)) {
+          G.Managers.SaveManager.save({ silent: true });
+          G.UI.HUD.showToast('快捷栏已设置', 'success');
+          if (options && typeof options.onChange === 'function') options.onChange();
+          else refreshHub('skills');
+        }
+      });
+      slotNode.addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+        G.Managers.PlayerManager.clearQuickbarSlot(slotIndex);
+        G.Managers.SaveManager.save({ silent: true });
+        if (options && typeof options.onChange === 'function') options.onChange();
+        else refreshHub('skills');
+      });
+      slotNode.addEventListener('click', function () {
+        var skillId = G.Managers.PlayerManager.getQuickbar()[slotIndex];
+        if (!skillId) return;
+        if (options && typeof options.onSelect === 'function') options.onSelect(skillId, slotIndex);
+      });
+    });
+  }
+
   function buildInventoryWindow() {
     var player = getPlayer();
     var summary = G.Managers.PlayerManager.getInventorySummary();
@@ -299,41 +488,100 @@
     right.className = 'window-preview';
 
     if (!summary.length) {
-      left.innerHTML = '<div class="empty-tip">你的背包暂时还是空的。</div>';
+      left.innerHTML = '<div class="window-toolbar"><div><div class="window-toolbar-title">仓库清单</div><div class="window-toolbar-sub">当前未持有任何物品</div></div></div><div class="empty-tip">你的背包暂时还是空的。</div>';
       right.innerHTML = itemPreviewHtml(null);
       content.appendChild(left);
       content.appendChild(right);
       return content;
     }
 
-    left.innerHTML = '<div class="list-stack"></div>';
-    var stack = left.querySelector('.list-stack');
-    summary.forEach(function (entry, index) {
-      var row = document.createElement('button');
-      row.className = 'list-entry item-entry ' + qualityClass(entry.item) + (index === 0 ? ' is-active' : '');
-      row.setAttribute('data-preview-id', entry.id);
-      row.innerHTML = [
-        '<span class="entry-main">' + entry.item.name + (entry.equipped ? ' · 已装备' : '') + '</span>',
-        '<span class="entry-meta">' + G.Managers.LibraryManager.getItemTypeLabel(entry.item) + (entry.item.equipSlot || entry.item.slot ? ' · ' + slotLabel(entry.item.equipSlot || entry.item.slot) : '') + '</span>',
-        '<span class="entry-count">x' + entry.count + '</span>'
-      ].join('');
-      row.addEventListener('click', function () {
-        right.innerHTML = itemPreviewHtml(entry);
-        attachInventoryActions(right, entry, player);
+    var activeFilter = 'all';
+    var pageState = { value: 0 };
+    var pageSize = 12;
+    left.innerHTML = [
+      '<div class="window-toolbar storage-toolbar">',
+        '<div><div class="window-toolbar-title">分页仓库</div><div class="window-toolbar-sub">更接近 DNF 的仓库浏览：分页、品质边框、装备可直接拖拽到人物槽位。</div></div>',
+        '<div class="window-tabs">',
+          tabButtonHtml('all', '全部', true, summary.length),
+          tabButtonHtml('equipment', '装备', false, summary.filter(function (entry) { return entry.item.type === 'equipment'; }).length),
+          tabButtonHtml('consumable', '消耗', false, summary.filter(function (entry) { return entry.item.type === 'consumable'; }).length),
+          tabButtonHtml('other', '其他', false, summary.filter(function (entry) { return entry.item.type !== 'equipment' && entry.item.type !== 'consumable'; }).length),
+        '</div>',
+        '<div class="window-pager"></div>',
+      '</div>',
+      '<div class="list-stack inventory-stack paged-storage"></div>'
+    ].join('');
+
+    var stack = left.querySelector('.inventory-stack');
+    var pager = left.querySelector('.window-pager');
+
+    function matches(entry) {
+      if (activeFilter === 'all') return true;
+      if (activeFilter === 'equipment') return entry.item.type === 'equipment';
+      if (activeFilter === 'consumable') return entry.item.type === 'consumable';
+      return entry.item.type !== 'equipment' && entry.item.type !== 'consumable';
+    }
+
+    function renderPreview(entry) {
+      right.innerHTML = itemPreviewHtml(entry);
+      attachInventoryActions(right, entry, player);
+    }
+
+    function renderList() {
+      var filtered = summary.filter(matches);
+      var meta = getPageMeta(filtered, pageState.value, pageSize);
+      pageState.value = meta.pageIndex;
+      stack.innerHTML = '';
+      if (!filtered.length) {
+        stack.innerHTML = '<div class="empty-tip">该分类下暂无物品。</div>';
+        right.innerHTML = itemPreviewHtml(null);
+        renderPager(pager, meta, function () {});
+        return;
+      }
+      meta.items.forEach(function (entry, index) {
+        var row = document.createElement('button');
+        row.className = 'list-entry item-entry ' + qualityClass(entry.item) + (index === 0 ? ' is-active' : '');
+        row.setAttribute('data-preview-id', entry.id);
+        row.innerHTML = entryHtml(
+          itemGlyph(entry.item),
+          entry.item.name + (entry.equipped ? ' · 已装备' : ''),
+          itemGroupLabel(entry.item) + (entry.item.equipSlot || entry.item.slot ? ' · ' + slotLabel(entry.item.equipSlot || entry.item.slot) : ''),
+          'x' + entry.count,
+          qualityClass(entry.item)
+        );
+        row.addEventListener('click', function () {
+          renderPreview(entry);
+        });
+        if (entry.item.type === 'equipment') {
+          makeDraggable(row, { type: 'inventory-item', reference: entry.instanceId || entry.itemId, slot: entry.item.equipSlot || entry.item.slot, itemId: entry.item.id });
+        }
+        stack.appendChild(row);
       });
-      stack.appendChild(row);
+      renderPreview(meta.items[0]);
+      bindHoverEntries(stack, right, function (id) {
+        var found = meta.items.find(function (entry) { return entry.id === id; });
+        return itemPreviewHtml(found);
+      }, function (id) {
+        var found = meta.items.find(function (entry) { return entry.id === id; });
+        return itemTooltipHtml(found);
+      });
+      renderPager(pager, meta, function (delta) {
+        pageState.value += delta;
+        renderList();
+      });
+    }
+
+    Array.prototype.slice.call(left.querySelectorAll('.window-tab')).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activeFilter = btn.getAttribute('data-tab');
+        pageState.value = 0;
+        Array.prototype.slice.call(left.querySelectorAll('.window-tab')).forEach(function (node) { node.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        renderList();
+      });
     });
 
-    right.innerHTML = itemPreviewHtml(summary[0]);
-    attachInventoryActions(right, summary[0], player);
-    bindHoverEntries(stack, right, function (id) {
-      var found = summary.find(function (entry) { return entry.id === id; });
-      return itemPreviewHtml(found);
-    }, function (id) {
-      var found = summary.find(function (entry) { return entry.id === id; });
-      return itemTooltipHtml(found);
-    });
-
+    renderList();
     content.appendChild(left);
     content.appendChild(right);
     return content;
@@ -349,7 +597,7 @@
     right.className = 'window-preview';
 
     if (!merchantPool.length) {
-      left.innerHTML = '<div class="empty-tip">当前地点没有商人。</div>';
+      left.innerHTML = '<div class="window-toolbar"><div><div class="window-toolbar-title">商会货架</div><div class="window-toolbar-sub">当前地点暂无商人。</div></div></div><div class="empty-tip">当前地点没有商人。</div>';
       right.innerHTML = itemPreviewHtml(null);
       content.appendChild(left);
       content.appendChild(right);
@@ -359,23 +607,33 @@
     var summary = merchantPool.map(function (itemId) {
       return { id: itemId, itemId: itemId, item: getItem(itemId), count: 1, equipped: false };
     }).filter(function (entry) { return !!entry.item; });
+    var activeFilter = 'all';
+    var pageState = { value: 0 };
+    var pageSize = 10;
 
-    left.innerHTML = '<div class="list-stack"></div>';
-    var stack = left.querySelector('.list-stack');
-    summary.forEach(function (entry, index) {
-      var row = document.createElement('button');
-      row.className = 'list-entry ' + qualityClass(entry.item) + (index === 0 ? ' is-active' : '');
-      row.setAttribute('data-preview-id', entry.id);
-      row.innerHTML = [
-        '<span class="entry-main">' + entry.item.name + '</span>',
-        '<span class="entry-meta">' + G.Managers.LibraryManager.getItemTypeLabel(entry.item) + '</span>',
-        '<span class="entry-count">' + (entry.item.buyPrice || entry.item.price || 0) + ' 银</span>'
-      ].join('');
-      row.addEventListener('click', function () {
-        renderShopPreview(right, entry);
-      });
-      stack.appendChild(row);
-    });
+    left.innerHTML = [
+      '<div class="window-toolbar storage-toolbar">',
+        '<div><div class="window-toolbar-title">商会货架</div><div class="window-toolbar-sub">分页货架与品质边框，让商店浏览更像传统页游客户端。</div></div>',
+        '<div class="window-tabs">',
+          tabButtonHtml('all', '全部', true, summary.length),
+          tabButtonHtml('equipment', '装备', false, summary.filter(function (entry) { return entry.item.type === 'equipment'; }).length),
+          tabButtonHtml('consumable', '药品', false, summary.filter(function (entry) { return entry.item.type === 'consumable'; }).length),
+          tabButtonHtml('other', '其他', false, summary.filter(function (entry) { return entry.item.type !== 'equipment' && entry.item.type !== 'consumable'; }).length),
+        '</div>',
+        '<div class="window-pager"></div>',
+      '</div>',
+      '<div class="list-stack shop-stack paged-storage"></div>'
+    ].join('');
+
+    var stack = left.querySelector('.shop-stack');
+    var pager = left.querySelector('.window-pager');
+
+    function matches(entry) {
+      if (activeFilter === 'all') return true;
+      if (activeFilter === 'equipment') return entry.item.type === 'equipment';
+      if (activeFilter === 'consumable') return entry.item.type === 'consumable';
+      return entry.item.type !== 'equipment' && entry.item.type !== 'consumable';
+    }
 
     function renderShopPreview(root, entry) {
       root.innerHTML = itemPreviewHtml(entry);
@@ -395,15 +653,58 @@
       root.appendChild(buyBtn);
     }
 
-    renderShopPreview(right, summary[0]);
-    bindHoverEntries(stack, right, function (id) {
-      var found = summary.find(function (entry) { return entry.id === id; });
-      return itemPreviewHtml(found);
-    }, function (id) {
-      var found = summary.find(function (entry) { return entry.id === id; });
-      return itemTooltipHtml(found);
+    function renderList() {
+      var filtered = summary.filter(matches);
+      var meta = getPageMeta(filtered, pageState.value, pageSize);
+      pageState.value = meta.pageIndex;
+      stack.innerHTML = '';
+      if (!filtered.length) {
+        stack.innerHTML = '<div class="empty-tip">该分类暂无可购买物品。</div>';
+        right.innerHTML = itemPreviewHtml(null);
+        renderPager(pager, meta, function () {});
+        return;
+      }
+      meta.items.forEach(function (entry, index) {
+        var row = document.createElement('button');
+        row.className = 'list-entry ' + qualityClass(entry.item) + (index === 0 ? ' is-active' : '');
+        row.setAttribute('data-preview-id', entry.id);
+        row.innerHTML = entryHtml(
+          itemGlyph(entry.item),
+          entry.item.name,
+          itemGroupLabel(entry.item),
+          (entry.item.buyPrice || entry.item.price || 0) + ' 银',
+          qualityClass(entry.item)
+        );
+        row.addEventListener('click', function () {
+          renderShopPreview(right, entry);
+        });
+        stack.appendChild(row);
+      });
+      renderShopPreview(right, meta.items[0]);
+      bindHoverEntries(stack, right, function (id) {
+        var found = meta.items.find(function (entry) { return entry.id === id; });
+        return itemPreviewHtml(found);
+      }, function (id) {
+        var found = meta.items.find(function (entry) { return entry.id === id; });
+        return itemTooltipHtml(found);
+      });
+      renderPager(pager, meta, function (delta) {
+        pageState.value += delta;
+        renderList();
+      });
+    }
+
+    Array.prototype.slice.call(left.querySelectorAll('.window-tab')).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activeFilter = btn.getAttribute('data-tab');
+        pageState.value = 0;
+        Array.prototype.slice.call(left.querySelectorAll('.window-tab')).forEach(function (node) { node.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        renderList();
+      });
     });
 
+    renderList();
     content.appendChild(left);
     content.appendChild(right);
     return content;
@@ -420,40 +721,110 @@
     right.className = 'window-preview';
 
     if (!learned.length) {
-      left.innerHTML = '<div class="empty-tip">你还没有学会武学。</div>';
+      left.innerHTML = '<div class="window-toolbar"><div><div class="window-toolbar-title">武学总览</div><div class="window-toolbar-sub">当前尚未习得任何武学。</div></div></div><div class="empty-tip">你还没有学会武学。</div>';
       right.innerHTML = skillPreviewHtml(null);
       content.appendChild(left);
       content.appendChild(right);
       return content;
     }
 
-    left.innerHTML = '<div class="list-stack"></div>';
-    var stack = left.querySelector('.list-stack');
-    learned.forEach(function (skill, index) {
-      var row = document.createElement('button');
-      row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
-      row.setAttribute('data-preview-id', skill.id);
-      row.innerHTML = '<span class="entry-main">' + skill.name + '</span><span class="entry-meta">' + (skill.type === 'support' ? '心法' : '招式') + '</span><span class="entry-count">MP ' + (skill.mpCost || 0) + '</span>';
-      row.addEventListener('click', function () {
-        right.innerHTML = skillPreviewHtml(skill);
+    var activeFilter = 'all';
+    var pageState = { value: 0 };
+    var pageSize = 10;
+    left.innerHTML = [
+      '<div class="window-toolbar">',
+        '<div><div class="window-toolbar-title">武学总览</div><div class="window-toolbar-sub">支持拖拽武学到右侧快捷栏；右键快捷栏槽位可清空。</div></div>',
+        '<div class="window-tabs">',
+          tabButtonHtml('all', '全部', true, learned.length),
+          tabButtonHtml('attack', '招式', false, learned.filter(function (skill) { return skillTypeLabel(skill) === '招式'; }).length),
+          tabButtonHtml('support', '心法', false, learned.filter(function (skill) { return skillTypeLabel(skill) === '心法'; }).length),
+        '</div>',
+        '<div class="window-pager"></div>',
+      '</div>',
+      '<div class="list-stack skill-stack paged-storage"></div>'
+    ].join('');
+
+    var stack = left.querySelector('.skill-stack');
+    var pager = left.querySelector('.window-pager');
+
+    function matches(skill) {
+      if (activeFilter === 'all') return true;
+      if (activeFilter === 'attack') return skillTypeLabel(skill) === '招式';
+      return skillTypeLabel(skill) === '心法';
+    }
+
+    function renderSkillPreview(skill) {
+      right.innerHTML = [
+        '<div class="preview-section"><div class="preview-title">技能快捷栏</div><div class="skill-quickbar-grid" id="skill-quickbar-grid"></div><div class="muted">拖拽左侧武学到槽位；右键槽位可清空。</div></div>',
+        skillPreviewHtml(skill)
+      ].join('');
+      renderQuickbarBlock(right.querySelector('#skill-quickbar-grid'), {
+        onChange: function () {
+          renderSkillPreview(skill);
+        },
+        onSelect: function (skillId) {
+          var selected = getSkill(skillId);
+          if (selected) {
+            var preview = right.querySelector('.window-kicker') ? right : null;
+            renderSkillPreview(selected);
+          }
+        }
       });
-      stack.appendChild(row);
+    }
+
+    function renderList() {
+      var filtered = learned.filter(matches);
+      var meta = getPageMeta(filtered, pageState.value, pageSize);
+      pageState.value = meta.pageIndex;
+      stack.innerHTML = '';
+      if (!filtered.length) {
+        stack.innerHTML = '<div class="empty-tip">该分类暂无武学。</div>';
+        right.innerHTML = skillPreviewHtml(null);
+        renderPager(pager, meta, function () {});
+        return;
+      }
+      meta.items.forEach(function (skill, index) {
+        var row = document.createElement('button');
+        row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
+        row.setAttribute('data-preview-id', skill.id);
+        row.innerHTML = entryHtml(skillGlyph(skill), skill.name, skillTypeLabel(skill), 'MP ' + (skill.mpCost || 0), skillTypeLabel(skill) === '心法' ? 'quality-rare' : 'quality-uncommon');
+        row.addEventListener('click', function () {
+          renderSkillPreview(skill);
+        });
+        makeDraggable(row, { type: 'skill', skillId: skill.id });
+        stack.appendChild(row);
+      });
+      renderSkillPreview(meta.items[0]);
+      bindHoverEntries(stack, right, function (id) {
+        return skillPreviewHtml(getSkill(id));
+      }, function (id) {
+        var skill = getSkill(id);
+        return skill ? '<div class="tooltip-name">' + skill.name + '</div><div class="tooltip-type">' + skillTypeLabel(skill) + '</div><div class="tooltip-desc">' + (skill.desc || '') + '</div>' : '';
+      });
+      renderPager(pager, meta, function (delta) {
+        pageState.value += delta;
+        renderList();
+      });
+    }
+
+    Array.prototype.slice.call(left.querySelectorAll('.window-tab')).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activeFilter = btn.getAttribute('data-tab');
+        pageState.value = 0;
+        Array.prototype.slice.call(left.querySelectorAll('.window-tab')).forEach(function (node) { node.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        renderList();
+      });
     });
 
-    right.innerHTML = skillPreviewHtml(learned[0]);
-    bindHoverEntries(stack, right, function (id) {
-      return skillPreviewHtml(getSkill(id));
-    }, function (id) {
-      var skill = getSkill(id);
-      return skill ? '<div class="tooltip-name">' + skill.name + '</div><div class="tooltip-type">' + (skill.type === 'support' ? '心法' : '招式') + '</div><div class="tooltip-desc">' + (skill.desc || '') + '</div>' : '';
-    });
-
+    renderList();
     content.appendChild(left);
     content.appendChild(right);
     return content;
   }
 
   function buildMapWindow() {
+
     var player = getPlayer();
     var nodes = (G.Data.maps && G.Data.maps.nodes) || [];
     var currentNodeId = player.currentNodeId;
@@ -472,7 +843,7 @@
       row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
       row.setAttribute('data-preview-id', node.id);
       row.disabled = !unlocked;
-      row.innerHTML = '<span class="entry-main">' + node.name + '</span><span class="entry-meta">' + G.Worlds.WuxiaRules.getNodeThemeLabel(node) + '</span><span class="entry-count">危 ' + node.danger + '</span>';
+      row.innerHTML = entryHtml('图', node.name, G.Worlds.WuxiaRules.getNodeThemeLabel(node), '危 ' + node.danger, unlocked ? 'quality-rare' : 'quality-common');
       row.addEventListener('click', function () {
         renderMapPreview(node);
       });
@@ -539,23 +910,12 @@
       '<div class="window-kicker">角色信息</div>',
       '<h3>' + player.name + ' · Lv.' + player.level + '</h3>',
       '<div class="tag-list"><span class="tag">' + player.backgroundLabel + '</span><span class="tag">' + player.talentLabel + '</span><span class="tag">' + player.factionName + '</span></div>',
-      '<div class="preview-section"><div class="preview-title">装备栏</div><div class="slot-stack" id="profile-slot-stack"></div></div>',
+      '<div class="preview-section"><div class="preview-title">装备栏</div><div class="equipment-grid" id="profile-slot-stack"></div><div class="muted">可直接把背包中的装备拖拽到对应槽位。</div></div>',
       '<div class="preview-section"><div class="preview-title">基础属性</div>' + previewStatsHtml({ maxHp: breakdown.base.maxHp, maxMp: breakdown.base.maxMp, strength: breakdown.base.strength, agility: breakdown.base.agility, constitution: breakdown.base.constitution, insight: breakdown.base.insight }, null) + '</div>',
       '<div class="preview-section"><div class="preview-title">最终战斗属性</div>' + previewStatsHtml({ attack: breakdown.final.attack, defense: breakdown.final.defense, speed: breakdown.final.speed, crit: breakdown.final.crit }, null) + '</div>'
     ].join('');
 
     var stack = left.querySelector('#profile-slot-stack');
-    ['weapon', 'armor', 'accessory'].forEach(function (slot, index) {
-      var entry = equipment[slot];
-      var row = document.createElement('button');
-      row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
-      row.setAttribute('data-preview-id', slot);
-      row.innerHTML = '<span class="entry-main">' + slotLabel(slot) + '</span><span class="entry-meta">' + (entry ? entry.name : '未装备') + '</span><span class="entry-count">' + (entry ? '已穿戴' : '--') + '</span>';
-      row.addEventListener('click', function () {
-        renderProfilePreview(slot, entry);
-      });
-      stack.appendChild(row);
-    });
 
     function renderProfilePreview(slot, entry) {
       if (!entry) {
@@ -575,6 +935,41 @@
       });
       right.appendChild(unequipBtn);
     }
+
+    ['weapon', 'armor', 'accessory'].forEach(function (slot, index) {
+      var entry = equipment[slot];
+      var row = document.createElement('button');
+      row.className = 'equipment-slot-card ' + (entry ? ('filled ' + qualityClass(entry)) : 'empty quality-common') + (index === 0 ? ' is-active' : '');
+      row.setAttribute('data-preview-id', slot);
+      row.innerHTML = [
+        '<span class="slot-corner">' + (slot === 'weapon' ? '武' : (slot === 'armor' ? '甲' : '饰')) + '</span>',
+        '<span class="slot-label">' + slotLabel(slot) + '</span>',
+        '<strong class="slot-item-name">' + (entry ? entry.name : '未装备') + '</strong>',
+        '<span class="slot-tip">' + (entry ? '点击查看 / 拖拽可更换' : '拖拽装备到此') + '</span>'
+      ].join('');
+      row.addEventListener('click', function () {
+        renderProfilePreview(slot, entry);
+        Array.prototype.slice.call(stack.querySelectorAll('.equipment-slot-card')).forEach(function (node) { node.classList.remove('is-active'); });
+        row.classList.add('is-active');
+      });
+      makeDroppable(row, function (payload) {
+        if (payload.type !== 'inventory-item') return;
+        var refEntry = G.Managers.PlayerManager.getInventoryEntry(payload.reference);
+        var refItem = refEntry ? G.Managers.PlayerManager.getItemById(refEntry.itemId) : null;
+        if (!refItem || refItem.type !== 'equipment') return;
+        var targetSlot = refItem.equipSlot || refItem.slot;
+        if (targetSlot !== slot) {
+          G.UI.HUD.showToast('装备类型不匹配该槽位', 'warning');
+          return;
+        }
+        if (G.Managers.PlayerManager.equipItem(payload.reference)) {
+          G.Managers.SaveManager.save({ silent: true });
+          G.UI.HUD.showToast('已装备：' + refItem.name, 'success');
+          refreshHub('profile');
+        }
+      });
+      stack.appendChild(row);
+    });
 
     renderProfilePreview('weapon', equipment.weapon || null);
     bindHoverEntries(stack, right, function (slot) {
@@ -607,7 +1002,7 @@
       var row = document.createElement('button');
       row.className = 'list-entry ' + (index === 0 ? ' is-active' : '');
       row.setAttribute('data-preview-id', entry.version);
-      row.innerHTML = '<span class="entry-main">' + entry.version + ' · ' + entry.title + '</span><span class="entry-meta">' + entry.date + '</span><span class="entry-count">' + (entry.current ? '当前' : '历史') + '</span>';
+      row.innerHTML = entryHtml('告', entry.version + ' · ' + entry.title, entry.date, entry.current ? '当前' : '历史', entry.current ? 'quality-legendary' : 'quality-common');
       row.addEventListener('click', function () {
         right.innerHTML = announcementPreviewHtml(entry);
       });

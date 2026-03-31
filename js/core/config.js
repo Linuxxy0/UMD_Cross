@@ -1,7 +1,7 @@
 (function (G) {
   G.Core.Config = {
-    STORAGE_KEY: 'transmigrator_wuxia_save_v160',
-    ANNOUNCEMENT_SEEN_KEY: 'transmigrator_wuxia_announcements_seen_v160',
+    STORAGE_KEY: 'transmigrator_wuxia_save_v180',
+    ANNOUNCEMENT_SEEN_KEY: 'transmigrator_wuxia_announcements_seen_v180',
     GAME_WIDTH: 1280,
     GAME_HEIGHT: 760,
     DATA_FILES: {
