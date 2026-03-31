@@ -1,14 +1,15 @@
 {
   "projectName": "一念穿越：江湖初卷",
   "repositoryName": "transmigrator-wuxia",
-  "version": "1.3.0",
+  "version": "1.6.0",
   "releaseChannel": "public",
   "world": "wuxia",
-  "storageKey": "transmigrator_wuxia_save_v130",
-  "releaseDate": "2026-03-30",
+  "storageKey": "transmigrator_wuxia_save_v160",
+  "releaseDate": "2026-03-31",
   "notes": [
-    "Added unified itemLibrary and equipmentLibrary as the single source of truth for item definitions.",
-    "Rebuilt player inventory into stack entries plus equipment instances with wear/unequip stat sync.",
-    "Added upper-right triangle system drawer with in-game Announcement and Admin windows."
+    "Unified Main Menu and Ending scenes into the same full-screen UMD line-based interface as the hub, role creation, event and battle scenes.",
+    "Rebuilt the Main Menu into a pure in-game three-column layout with save preview, launch instructions, world intro and release intel panels.",
+    "Rebuilt the Ending scene into a true in-game result screen with left status column, center ending summary and right follow-up intel panel, while keeping side drawers and game windows active.",
+    "Hardened the profile and admin windows so they no longer error when opened before a character is created."
   ]
 }

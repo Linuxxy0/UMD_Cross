@@ -228,3 +228,53 @@ body {
   line-height: 1.6;
   font-size: 13px;
 }
+
+
+/* v1.5.0 UMD line-mode layout overrides */
+body {
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, #091321 0%, #060d18 55%, #040912 100%);
+}
+
+#game-shell {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#game-stage {
+  min-height: 100vh;
+  height: 100vh;
+  border-radius: 0;
+  border: 1px solid rgba(95, 126, 174, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(9, 18, 31, 0.9);
+  background: linear-gradient(180deg, rgba(8, 16, 28, 0.98), rgba(6, 12, 21, 0.98));
+}
+
+#game-stage::before {
+  background:
+    linear-gradient(90deg, rgba(95,126,174,0.08) 0, rgba(95,126,174,0.08) 1px, transparent 1px, transparent 120px),
+    linear-gradient(180deg, rgba(95,126,174,0.06) 0, rgba(95,126,174,0.06) 1px, transparent 1px, transparent 120px);
+  opacity: 0.32;
+}
+
+#game-container {
+  height: 100vh;
+}
+
+.floating-tooltip,
+.toast,
+.story-block,
+.feature-card,
+.kv-item,
+.header-note,
+.ghost-btn {
+  border-radius: 0 !important;
+}
+
+.floating-tooltip {
+  border: 1px solid rgba(245, 209, 126, 0.28);
+  background: linear-gradient(180deg, rgba(20,19,18,0.98), rgba(8,8,10,0.98));
+}

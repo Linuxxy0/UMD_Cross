@@ -1,6 +1,6 @@
 window.TransmigratorGame = window.TransmigratorGame || {};
 (function (G) {
-  G.version = '1.3.0';
+  G.version = '1.6.0';
   G.Core = G.Core || {};
   G.Managers = G.Managers || {};
   G.Scenes = G.Scenes || {};
@@ -9,6 +9,8 @@ window.TransmigratorGame = window.TransmigratorGame || {};
   G.State = G.State || {
     game: null,
     currentScene: null,
+    leftDrawerOpen: false,
+    rightDrawerOpen: false,
     systemDrawerOpen: false
   };
   G.Data = G.Data || {};

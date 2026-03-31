@@ -12,6 +12,10 @@
     return rumors[node.id] || '江湖风声未定，或许下一次探索就会引出真正的线索。';
   }
 
+  function equipmentRow(label, entry) {
+    return '<div class="equip-mini-row"><span>' + label + '</span><strong>' + (entry ? entry.name : '未装备') + '</strong></div>';
+  }
+
   function renderHub() {
     var player = G.Managers.PlayerManager.getPlayer();
     if (!player) {
@@ -25,23 +29,32 @@
     var merchantPool = G.Managers.WorldManager.getMerchantPoolForCurrentNode();
     var settlementEvent = G.Managers.WorldManager.getSettlementEventForCurrentNode();
     var equipment = G.Managers.PlayerManager.getEquipmentDetail();
-    var breakdown = G.Managers.PlayerManager.getAttributeBreakdown();
+    var rep = player.factionReputation || {};
 
     var layer = document.createElement('div');
-    layer.className = 'ui-layer hub-screen';
-    var topBar = G.UI.HUD.buildTopBar();
-    topBar.id = 'hub-top-bar';
-    layer.appendChild(topBar);
-    layer.appendChild(G.UI.GameWindows.buildSystemCorner());
+    layer.className = 'ui-layer hub-screen umd-hub-screen';
 
     var wrap = document.createElement('div');
-    wrap.className = 'hub-layout';
+    wrap.className = 'hub-layout umd-layout';
 
-    var main = G.UI.Panel({ title: current.name, subtitle: '武侠世界 · ' + G.Worlds.WuxiaRules.getNodeThemeLabel(current), className: 'main-panel hub-main-panel', strong: true });
+    var left = document.createElement('aside');
+    left.className = 'hud-column hud-column-left';
+    left.appendChild(G.UI.HUD.buildTopBar());
+    left.appendChild(G.UI.HUD.buildBaseStatsPanel());
+    var equipPanel = G.UI.Panel({ title: '当前穿戴', subtitle: '装备联动', className: 'sidebar-panel equipment-brief-panel' });
+    equipPanel.body.innerHTML = [
+      equipmentRow('武器', equipment.weapon),
+      equipmentRow('护甲', equipment.armor),
+      equipmentRow('饰品', equipment.accessory),
+      '<div class="muted attr-footnote">悬停装备可在个人信息或背包窗口查看详细面板。</div>'
+    ].join('');
+    left.appendChild(equipPanel);
+
+    var main = G.UI.Panel({ title: current.name, subtitle: '当前区域 / 场景交互', className: 'main-panel hub-main-panel', strong: true });
     main.body.innerHTML = [
       '<div class="hub-viewport scene-' + current.type + '">',
         '<div class="hub-viewport-content">',
-          '<div class="window-kicker">当前主场景</div>',
+          '<div class="scene-line-label">UMD 场景界面</div>',
           '<h3>' + current.name + '</h3>',
           '<p>' + current.desc + '</p>',
           '<div class="tag-list">',
@@ -59,34 +72,31 @@
         '<button class="btn" id="hub-save-btn">保存进度</button>',
       '</div>',
       '<div class="route-panel">',
-        '<div class="panel-header slim"><h3>附近可达地点</h3><span class="muted">点击前往或在地图窗查看详情</span></div>',
+        '<div class="panel-header slim"><h3>附近可达地点</h3><span class="muted">点击直接前往</span></div>',
         '<div class="route-grid" id="route-grid"></div>',
       '</div>'
     ].join('');
 
-    var side = G.UI.Panel({ title: '江湖情报', subtitle: '任务 / 属性 / 装备', className: 'sidebar-panel hub-side-panel' });
-    var rep = player.factionReputation || {};
-    side.body.innerHTML = [
-      '<div class="quest-card">',
-        '<div class="window-kicker">当前目标</div>',
+    var right = G.UI.Panel({ title: '江湖情报', subtitle: '主线 / 风闻 / 势力', className: 'sidebar-panel hub-side-panel' });
+    right.body.innerHTML = [
+      '<div class="quest-card line-card">',
+        '<div class="window-kicker">主线目标</div>',
         '<h3>追索界门</h3>',
         '<p>沿着破庙、夜市与门派情报继续推进，找出这次穿越的真正源头。</p>',
       '</div>',
-      '<div class="feature-card compact">',
+      '<div class="feature-card compact line-card">',
         '<div class="feature-kicker">风闻</div>',
         '<p>' + quickRumor(current) + '</p>',
       '</div>',
-      '<div class="kv-grid compact-grid">',
-        '<div class="kv-item"><strong>攻击</strong><div class="muted">' + breakdown.final.attack + '</div></div>',
-        '<div class="kv-item"><strong>防御</strong><div class="muted">' + breakdown.final.defense + '</div></div>',
-        '<div class="kv-item"><strong>武器</strong><div class="muted">' + (equipment.weapon ? equipment.weapon.name : '未装备') + '</div></div>',
-        '<div class="kv-item"><strong>饰品</strong><div class="muted">' + (equipment.accessory ? equipment.accessory.name : '未装备') + '</div></div>',
-      '</div>',
-      '<div class="feature-card compact">',
+      '<div class="feature-card compact line-card">',
         '<div class="feature-kicker">势力声望</div>',
-        '<p>天岳 ' + (rep.tianyue || 0) + ' · 玄衣 ' + (rep.xuanyi || 0) + ' · 药王 ' + (rep.yaowang || 0) + '</p>',
+        '<div class="intel-list">',
+          '<div><span>天岳剑宗</span><strong>' + (rep.tianyue || 0) + '</strong></div>',
+          '<div><span>玄衣楼</span><strong>' + (rep.xuanyi || 0) + '</strong></div>',
+          '<div><span>药王谷</span><strong>' + (rep.yaowang || 0) + '</strong></div>',
+        '</div>',
       '</div>',
-      '<div class="feature-card compact">',
+      '<div class="feature-card compact line-card">',
         '<div class="feature-kicker">已学武学</div>',
         '<div class="tag-list">' + (player.learnedSkills || []).map(function (id) {
           var skill = ((G.Data.skills && G.Data.skills.skills) || []).find(function (entry) { return entry.id === id; });
@@ -94,14 +104,13 @@
         }).join('') + '</div>',
       '</div>'
     ].join('');
-    side.body.appendChild(G.UI.HUD.buildStatBars(player));
 
+    wrap.appendChild(left);
     wrap.appendChild(main);
-    wrap.appendChild(side);
+    wrap.appendChild(right);
     layer.appendChild(wrap);
-
-    var toolbar = G.UI.GameWindows.buildToolbar();
-    layer.appendChild(toolbar);
+    layer.appendChild(G.UI.GameWindows.buildSideDrawer('left'));
+    layer.appendChild(G.UI.GameWindows.buildSideDrawer('right'));
 
     var modalRoot = document.createElement('div');
     modalRoot.id = 'hub-modal-root';
@@ -116,7 +125,7 @@
     var routeGrid = main.body.querySelector('#route-grid');
     destinations.forEach(function (node) {
       var card = document.createElement('div');
-      card.className = 'route-card';
+      card.className = 'route-card line-card';
       card.innerHTML = [
         '<div class="route-card-top">',
           '<strong>' + node.name + '</strong>',
@@ -196,10 +205,11 @@
     create: function () {
       this.cameras.main.setBackgroundColor('#07101a');
       this.add.rectangle(640, 380, 1280, 760, 0x08101a, 1);
-      this.add.circle(1130, 126, 76, 0xf5d17e, 0.08);
-      this.add.triangle(240, 600, 40, 760, 240, 260, 450, 760, 0x101f31, 1);
-      this.add.triangle(600, 640, 320, 760, 600, 210, 860, 760, 0x0c1a2a, 1);
-      this.add.triangle(980, 620, 740, 760, 980, 280, 1220, 760, 0x13273c, 1);
+      this.add.triangle(160, 660, 0, 760, 160, 180, 350, 760, 0x0c1727, 1);
+      this.add.triangle(540, 620, 280, 760, 540, 240, 790, 760, 0x101c2d, 1);
+      this.add.triangle(920, 650, 680, 760, 920, 260, 1190, 760, 0x132237, 1);
+      this.add.triangle(1180, 690, 940, 760, 1180, 300, 1280, 760, 0x0d1826, 1);
+      this.add.line(960, 70, 0, 0, 300, 0, 0x4f6b95, 0.25).setOrigin(0, 0);
       renderHub();
     }
   });

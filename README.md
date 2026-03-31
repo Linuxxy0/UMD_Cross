@@ -1,6 +1,6 @@
 # 一念穿越：江湖初卷
 
-![Version](https://img.shields.io/badge/version-1.3.0-8b5cf6)
+![Version](https://img.shields.io/badge/version-1.5.0-8b5cf6)
 ![Engine](https://img.shields.io/badge/engine-Phaser_3-2d7ff9)
 ![Deploy](https://img.shields.io/badge/deploy-GitHub_Pages-111827)
 ![License](https://img.shields.io/badge/license-MIT-16a34a)
@@ -28,8 +28,8 @@
 
 ## 当前版本
 
-- **版本号**：`1.3.0`
-- **主界面特性**：个人信息 / 背包 / 商城 / 技能 / 地图 五大弹窗并排布局，右上角新增系统三角菜单（公告 / 后台）
+- **版本号**：`1.5.0`
+- **主界面特性**：主界面、创建角色页、事件页、战斗页统一为 UMD 线条界面，侧边小三角抽屉贯通人物、背包、技能、地图、商场、公告与后台窗口
 - **版本页**：[`version.html`](./version.html)
 - **变更记录**：[`CHANGELOG.md`](./CHANGELOG.md)
 - **部署说明**：[`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md)

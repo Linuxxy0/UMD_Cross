@@ -513,6 +513,19 @@
 
   function buildProfileWindow() {
     var player = getPlayer();
+    if (!player) {
+      var emptyContent = document.createElement('div');
+      emptyContent.className = 'window-layout';
+      var emptyLeft = document.createElement('div');
+      emptyLeft.className = 'profile-card';
+      emptyLeft.innerHTML = '<div class="window-kicker">角色信息</div><h3>尚未创建角色</h3><p class="preview-desc">先从主菜单或创建角色页进入江湖，再使用个人信息窗口查看装备栏和属性。</p>';
+      var emptyRight = document.createElement('aside');
+      emptyRight.className = 'window-preview';
+      emptyRight.innerHTML = '<div class="window-kicker">提示</div><h3>暂无角色数据</h3><div class="empty-tip">当前存档里没有可展示的角色。新建角色后，这里会显示装备栏、基础属性和最终战斗属性。</div>';
+      emptyContent.appendChild(emptyLeft);
+      emptyContent.appendChild(emptyRight);
+      return emptyContent;
+    }
     var equipment = G.Managers.PlayerManager.getEquipmentDetail();
     var breakdown = G.Managers.PlayerManager.getAttributeBreakdown();
     var content = document.createElement('div');
@@ -628,6 +641,13 @@
     var right = document.createElement('aside');
     right.className = 'window-preview';
     var player = getPlayer();
+    if (!player) {
+      left.innerHTML = '<div class="window-kicker">后台 / 管理</div><h3>尚未进入江湖</h3><p class="preview-desc">主菜单阶段可先查看公告；进入游戏后，这里会开放本地存档调试与导入导出操作。</p>';
+      right.innerHTML = '<div class="window-kicker">当前状态</div><h3>无可用角色</h3><div class="empty-tip">创建角色后可在这里恢复状态、增加银两、发放物品，以及导入导出存档。</div>';
+      content.appendChild(left);
+      content.appendChild(right);
+      return content;
+    }
 
     left.innerHTML = [
       '<div class="window-kicker">后台 / 管理</div>',
@@ -703,6 +723,8 @@
       var win = createWindow(key);
       if (win) root.appendChild(win);
       hideTooltip();
+      G.State.leftDrawerOpen = false;
+      G.State.rightDrawerOpen = false;
       G.State.systemDrawerOpen = false;
     },
     close: function () {
@@ -711,40 +733,39 @@
       currentWindowKey = null;
       hideTooltip();
     },
-    buildToolbar: function () {
-      var panel = document.createElement('div');
-      panel.className = 'panel toolbar-panel';
-      panel.innerHTML = [
-        '<button class="toolbar-btn" data-window="profile">个人信息</button>',
-        '<button class="toolbar-btn" data-window="inventory">背包</button>',
-        '<button class="toolbar-btn" data-window="shop">商城</button>',
-        '<button class="toolbar-btn" data-window="skills">技能</button>',
-        '<button class="toolbar-btn" data-window="map">地图</button>'
-      ].join('');
-      Array.prototype.slice.call(panel.querySelectorAll('[data-window]')).forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          G.UI.GameWindows.open(btn.getAttribute('data-window'));
-        });
-      });
-      return panel;
-    },
-    buildSystemCorner: function () {
+    buildSideDrawer: function (side) {
+      var isLeft = side === 'left';
+      var stateKey = isLeft ? 'leftDrawerOpen' : 'rightDrawerOpen';
       var wrap = document.createElement('div');
-      wrap.className = 'system-corner' + (G.State.systemDrawerOpen ? ' is-open' : '');
+      wrap.className = 'side-drawer-wrap ' + (isLeft ? 'left-side-drawer' : 'right-side-drawer') + (G.State[stateKey] ? ' is-open' : '');
+      var unread = (!isLeft && G.Managers.AnnouncementManager.hasUnreadCurrent()) ? '<span class="corner-dot"></span>' : '';
+      var primary = [
+        '<button class="drawer-btn" data-window="profile">个人信息</button>',
+        '<button class="drawer-btn" data-window="inventory">背包</button>',
+        '<button class="drawer-btn" data-window="skills">技能</button>',
+        '<button class="drawer-btn" data-window="map">地图</button>',
+        '<button class="drawer-btn" data-window="shop">商场</button>'
+      ].join('');
+      var secondary = isLeft ? '' : [
+        '<div class="drawer-separator"></div>',
+        '<button class="drawer-btn drawer-btn-small" data-window="announcement">公告' + unread + '</button>',
+        '<button class="drawer-btn drawer-btn-small" data-window="admin">后台</button>'
+      ].join('');
       wrap.innerHTML = [
-        '<button class="system-triangle-btn" id="system-triangle-btn" aria-label="系统菜单">△' + (G.Managers.AnnouncementManager.hasUnreadCurrent() ? '<span class="corner-dot"></span>' : '') + '</button>',
-        '<div class="system-drawer">',
-          '<button class="drawer-btn" data-window="announcement">公告</button>',
-          '<button class="drawer-btn" data-window="admin">后台</button>',
+        '<button class="side-triangle-btn" aria-label="侧边菜单">' + (isLeft ? '◁' : '▷') + '</button>',
+        '<div class="side-drawer-panel">',
+          primary,
+          secondary,
         '</div>'
       ].join('');
-      wrap.querySelector('#system-triangle-btn').addEventListener('click', function () {
-        G.State.systemDrawerOpen = !G.State.systemDrawerOpen;
-        wrap.classList.toggle('is-open', G.State.systemDrawerOpen);
+      wrap.querySelector('.side-triangle-btn').addEventListener('click', function () {
+        G.State[stateKey] = !G.State[stateKey];
+        wrap.classList.toggle('is-open', G.State[stateKey]);
       });
       Array.prototype.slice.call(wrap.querySelectorAll('.drawer-btn')).forEach(function (btn) {
         btn.addEventListener('click', function () {
-          G.State.systemDrawerOpen = false;
+          G.State.leftDrawerOpen = false;
+          G.State.rightDrawerOpen = false;
           G.UI.GameWindows.open(btn.getAttribute('data-window'));
         });
       });
